@@ -8,9 +8,9 @@
 clear
 
 % Set filenames
-fileBase = 'DT2_NPG'; % Set this, don't mess with the automatic date system.
+fileBase = 'DT2_NPG_dissolved'; % Set this, don't mess with the automatic date system.
 today = datestr(datetime('now'),'.yyyy.mm.dd');
-NameOfFile = string(['DT2_NPG',today,'.mat']);
+NameOfFile = string([fileBase,today,'.mat']);
 
 % There is not a peak quality parameter I've found yet in Skyline.
 % setQuality = 
@@ -23,8 +23,8 @@ clear wDir
 
 % Where are the lists of exported exported data from Skyline?
 sDir = 'F:/Metabolomics/Derivatization2/SkylineExports';
-dfile_pos = string([sDir filesep 'Quant_pos_17May2021.csv']);
-dfile_neg = string([sDir filesep 'Quant_neg_17May2021.csv']); 
+dfile_pos = string([sDir filesep 'Quant_pos_dissolved_18May2021.csv']);
+dfile_neg = string([sDir filesep 'Quant_neg_dissolved_18May2021.csv']); 
 clear sDir
 
 % Unclear whether we need an SRM list here but that's where it is in

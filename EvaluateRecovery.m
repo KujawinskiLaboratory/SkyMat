@@ -4,7 +4,7 @@
 
 clear
 clc
-load('DT2_NPG.2021.05.17.mat')
+load('DT2_NPG_filters.2021.05.18.mat')
 setDefaultFigs
 
 %% Part 1: visual
