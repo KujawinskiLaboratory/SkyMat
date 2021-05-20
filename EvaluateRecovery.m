@@ -4,41 +4,50 @@
 
 clear
 clc
-setDefaultFigs
+%setDefaultFigs
 
 %% Part 0: Combining files
 % I want to have both sets of quantitifed metabolites (filter and
 % dissolved) in one dataset.
 load('DT2_NPG_filters.2021.05.18.mat')
-sInfoBig = sInfo;
+sInfoFilters = sInfo;
 clear NameOfFile
 fulldata = struct;
 fulldata.filters.neg = neg; fulldata.filters.pos = pos;
 clear pos neg
-mtabDataBig = mtabData; 
+mtabDataFilters = mtabData; 
 clear mtabData sInfo
 
 load('DT2_NPG_dissolved.2021.05.19.mat')
+fulldata.dissolved.pos = pos;
+fulldata.dissolved.neg = neg;
+clear pos neg
 
-[~, ia, ib] = intersect(sInfo, sInfoBig);
-[~, inota] = setdiff(sInfo, sInfoBig);
-[~, inotb] = setdiff(sInfoBig, sInfo);
-sInfoBig = [sInfo(inota,:); sInfoBig(inotb,:); sInfoBig(ib,:)];
+[~, ia, ib] = intersect(sInfo, sInfoFilters);
+[~, inota] = setdiff(sInfo, sInfoFilters);
+[~, inotb] = setdiff(sInfoFilters, sInfo);
+sInfoBig = [sInfo(inota,:); sInfoFilters(inotb,:); sInfoFilters(ib,:)];
 sInfoBig.matrix(:) = "filter";
-sInfoBig.matrix([7:12,19:27]) = "BATS"; 
-mtabData = [mtabData(:,inota), mtabData(:,ia)];
-mtabDataBig = [mtabDataBig(:,inotb), mtabDataBig(:,ib)]
+sInfoBig.matrix([1:6,19:27]) = "BATS"; %Matrix with which the injection was quantified
+mtabDataBig = [mtabDataFilters(:,inotb), mtabData(:,inota), mtabDataFilters(:,2:7), mtabData(:,[8:10,12:17])];
 
+% All the cal curve stuff is NaN by my own design soooo
+sInfoBig(1:12,:)=[]; mtabDataBig(:,1:12)=[];
+clear sInfo ia ib mtabData sInfoFilters mtabDataFilters inota inotb 
+NameOfFile = "DT2_Working_NPG_2021.05.20.mat";
+save(NameOfFile)
 
 %% Part 1: visual
 % Here I just want to load up the file and show things for the filters;
 % expected vs. measured concentrations. 
 
-filtersamples = ismember(sInfo.quantMatrix,'filter');
-sInfoSmall = sInfo(filtersamples,:);
+filtersamples = ismember(sInfoBig.matrix,'filter');
+sInfoSmall = sInfoBig(filtersamples,:);
+sInfoSmall.group = [1;1;1;2;2;2];
+sInfoSmall.known = 10*ones(6,1);
 G = findgroups(sInfoSmall.group);
 for ii=1:length(mtabNames)
-    data = mtabData(ii,filtersamples)';
+    data = mtabDataBig(ii,filtersamples)';
     avgs = splitapply(@mean, data, G);
     stds = splitapply(@std, data, G);
     exp = splitapply(@mean, sInfoSmall.known, G);
