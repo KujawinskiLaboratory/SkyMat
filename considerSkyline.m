@@ -87,7 +87,7 @@ switch ionMode
     case 'pos'
         kStandard = (strcmp('curve', info.sType) & strcmp("pos", info.ionMode));           
 end
-setStandardConcentrations = unique(data.AnalyteConcentration(kStandard));
+setStandardConcentrations = unique(data.AnalyteConcentration);
 
 % Much of what follows for a while is nearly verbatim from KL's original 
 % code. Her scheme of variable preallocation is something I didn't want to
@@ -144,9 +144,7 @@ for a = 1:length(compoundList.names)
         smallDS.sType(ia,1) = info.sType(ib,1);
         clear c ia ib  
         
-        % Oddly, Skyline's calculated light/heavy ratios are slightly
-        % different than what MATLAB gives. So, what we'll do is
-        % recalculate them. 
+        % For now, I'm independently calculating light-heavy ratios
         smallDS.LHR = zeros(height(smallDS),1);
         heavyArea = smallDS.Area(smallDS.IsotopeLabelType=="heavy");
         lightArea = smallDS.Area(smallDS.IsotopeLabelType=="light");
@@ -155,8 +153,9 @@ for a = 1:length(compoundList.names)
                 lightArea./heavyArea;
             smallDS.LHR(isinf(smallDS.LHR))=NaN;
         else 
-            disp('There was a mismatch in the number of light and heavy ion measurements for')
-            disp(compoundList.names{a})
+            disp(['There was a mismatch in the number of'...
+                ' light and heavy ion measurements for '...
+                compoundList.names{a}])
             continue
         end
         
@@ -178,7 +177,6 @@ for a = 1:length(compoundList.names)
         %%cheat and set the concentration range by hand for now
         xdata = setStandardConcentrations;
         ydata(1:length(xdata),1) = NaN;
-        quality = ydata;
         %get all possible values from the standard curve
         ydata(idxStandards) = smallDS.LHR(idxDS);
         % quality(idxStandards) = smallDS.quality(idxDS); % :(

@@ -4,14 +4,37 @@
 
 clear
 clc
-load('DT2_NPG_filters.2021.05.18.mat')
 setDefaultFigs
+
+%% Part 0: Combining files
+% I want to have both sets of quantitifed metabolites (filter and
+% dissolved) in one dataset.
+load('DT2_NPG_filters.2021.05.18.mat')
+sInfoBig = sInfo;
+clear NameOfFile
+fulldata = struct;
+fulldata.filters.neg = neg; fulldata.filters.pos = pos;
+clear pos neg
+mtabDataBig = mtabData; 
+clear mtabData sInfo
+
+load('DT2_NPG_dissolved.2021.05.19.mat')
+
+[~, ia, ib] = intersect(sInfo, sInfoBig);
+[~, inota] = setdiff(sInfo, sInfoBig);
+[~, inotb] = setdiff(sInfoBig, sInfo);
+sInfoBig = [sInfo(inota,:); sInfoBig(inotb,:); sInfoBig(ib,:)];
+sInfoBig.matrix(:) = "filter";
+sInfoBig.matrix([7:12,19:27]) = "BATS"; 
+mtabData = [mtabData(:,inota), mtabData(:,ia)];
+mtabDataBig = [mtabDataBig(:,inotb), mtabDataBig(:,ib)]
+
 
 %% Part 1: visual
 % Here I just want to load up the file and show things for the filters;
 % expected vs. measured concentrations. 
 
-filtersamples = ismember(sInfo.matrix,'filter');
+filtersamples = ismember(sInfo.quantMatrix,'filter');
 sInfoSmall = sInfo(filtersamples,:);
 G = findgroups(sInfoSmall.group);
 for ii=1:length(mtabNames)

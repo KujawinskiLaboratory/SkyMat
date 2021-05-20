@@ -17,7 +17,7 @@ NameOfFile = string([fileBase,today,'.mat']);
 
 % Set the sequence file here.
 wDir = 'F:/Metabolomics/Derivatization2/2021_0405_FB2/sequence_fromMethods';
-fName = 'mtab_Noah_FB2_040521_asv.xlsx';
+fName = 'mtab_Noah_FB2_040521_diss.xlsx';
 sampleInfoFile = string([wDir filesep fName]);
 clear wDir
 
