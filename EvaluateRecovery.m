@@ -63,3 +63,26 @@ for ii=1:length(mtabNames)
     xticklabels({'','buffered','','unbuffered'})
     legend({'Rep Mean +/- \sigma', 'Target'}, 'Location', 'southeast')
 end
+
+dissolvedSamples = ismember(sInfoBig.matrix, "BATS");
+sInfoSmall = sInfoBig(dissolvedSamples, :);
+sInfoSmall.group = [1;1;1;2;2;2;3;3;3];
+sInfoSmall.known = [0;0;0;10;10;10;1;1;1];
+G = findgroups(sInfoSmall.group);
+for ii=1:length(mtabNames)
+    data = mtabDataBig(ii,dissolvedSamples)';
+    avgs = splitapply(@mean, data, G);
+    stds = splitapply(@std, data, G);
+    exp = splitapply(@mean, sInfoSmall.known, G);
+    figure
+    errorbar(1:length(avgs),avgs,stds, 'LineStyle', 'none',...
+        'Marker', 'x', 'MarkerSize', 3)
+    hold on
+    scatter(1:length(avgs), exp)
+    title(mtabNames(ii))
+    ylabel('Concentration, ng/mL')
+    xlim([0.5,3.5])
+    ylim([0,max([avgs + stds + 1;exp])])
+    xticklabels({'','VSW 0ng/ml','','VSW 10ng/ml','','BATS 1ng/ml'})
+    legend({'Rep Mean +/- \sigma', 'Target'}, 'Location', 'best')
+end
