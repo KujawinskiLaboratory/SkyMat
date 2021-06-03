@@ -182,9 +182,9 @@ for a = 1:length(compoundList.names)
         % quality(idxStandards) = smallDS.quality(idxDS); % :(
         % No quality filtering yet.
         
-        xdata = cat(1,0,xdata); 
+        xdata = cat(1,xdata); 
         
-        ydata = cat(1,meanBlank,ydata); 
+        ydata = cat(1,ydata); 
         %clear meanBlank
         clear idxDS idxStandards 
         

@@ -16,6 +16,7 @@ fulldata = struct;
 fulldata.filters.neg = neg; fulldata.filters.pos = pos;
 clear pos neg
 mtabDataFilters = mtabData; 
+mtabNamesFilters = mtabNames;
 clear mtabData sInfo
 
 load('DT2_NPG_dissolved.2021.05.19.mat')
@@ -44,7 +45,7 @@ save(NameOfFile)
 filtersamples = ismember(sInfoBig.matrix,'filter');
 sInfoSmall = sInfoBig(filtersamples,:);
 sInfoSmall.group = [1;1;1;2;2;2];
-sInfoSmall.known = 10*ones(6,1);
+sInfoSmall.known = 72.5*ones(6,1);
 G = findgroups(sInfoSmall.group);
 for ii=1:length(mtabNames)
     data = mtabDataBig(ii,filtersamples)';
@@ -59,7 +60,7 @@ for ii=1:length(mtabNames)
     title(mtabNames(ii))
     ylabel('Concentration, ng/mL')
     xlim([0.5,2.5])
-    ylim([0,max([avgs + stds + 1;exp])])
+    ylim([0,max([avgs + stds + 5;exp + 5])])
     xticklabels({'','buffered','','unbuffered'})
     legend({'Rep Mean +/- \sigma', 'Target'}, 'Location', 'southeast')
 end
