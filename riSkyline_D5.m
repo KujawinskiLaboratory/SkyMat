@@ -31,9 +31,9 @@ clear sDir
 
 % Move onto the processing for positive mode.
 [pos_D5.sNames, pos_D5.kgd] = considerSkyline(dfile_pos, sampleInfoFile,...
-    'pos','heavyC13',1);
+    'pos','heavyD5',1);
 [neg_D5.sNames, neg_D5.kgd] = considerSkyline(dfile_neg, sampleInfoFile,...
- 'neg','heavyC13',1);
+ 'neg','heavyD5',1);
 
 
 %%
