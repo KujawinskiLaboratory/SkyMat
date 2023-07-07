@@ -5,7 +5,7 @@
 %%%%Skyline resulting in high light/heavy area ratios for the MQ water which
 %%%%is not a problem on the TSQ. 
 
-function [sampleNames, keepGoodData] = considerSkyline_2SILIS(...
+function [sampleNames, keepGoodData] = considerSkyline(...
     exportedSkyline, sampleInfoFile, ionMode, SILISType,nSILIS)
 % considerSkyline V0 : This function is called by riSkyline.m and is
 % responsible for quantification of metabolites via a five-point standard
