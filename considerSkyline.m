@@ -37,10 +37,6 @@ info = info(strcmp(ionMode, info.ionMode),:);
 data.precursor = (data.FragmentIonType == "precursor" &...
     data.IsotopeLabelType == "light");
 
-%YZ 03/28/2023, remove "_light","_D5", and "_C13" in MoleculeName
-if nSILIS == 2
-    data.MoleculeName = strtok(data.MoleculeName, '_');
-end
 compoundList = table(unique(data.MoleculeName, 'stable'),'VariableNames', {'names'});
 
 % What considerMAVEN did here was to make sure that all molecules measured
@@ -155,7 +151,7 @@ for a = 1:length(compoundList.names)
 %     end
     
     k = (strcmp(compoundList.names(a),data.MoleculeName) &...
-        (data.precursor==1 | data.IsotopeLabelType=="heavy"));
+        (data.precursor==1 | data.TransitionNote=="heavy"));
     
     if sum(k)>0
         smallDS = data(k,:);
@@ -174,15 +170,15 @@ for a = 1:length(compoundList.names)
         %heavy isotopes in this dataset
         
         if nSILIS == 2
-            heavyArea = smallDS.Area(smallDS.TransitionNote==...
+            heavyArea = smallDS.Area(smallDS.IsotopeLabelType==...
             convertCharsToStrings(SILISType));
         elseif nSILIS == 1
-            heavyArea = smallDS.Area(smallDS.IsotopeLabelType=="heavy");
+            heavyArea = smallDS.Area(smallDS.TransitionNote=="heavy");
         end
         
-        lightArea = smallDS.Area(smallDS.IsotopeLabelType=="light");
+        lightArea = smallDS.Area(smallDS.TransitionNote=="light");
         if length(heavyArea) == length(lightArea)
-            smallDS.LHR(smallDS.IsotopeLabelType=="light") = ...
+            smallDS.LHR(smallDS.TransitionNote=="light") = ...
                 lightArea./heavyArea;
             smallDS.LHR(isinf(smallDS.LHR))=NaN;
         else 
@@ -195,7 +191,7 @@ for a = 1:length(compoundList.names)
         % Now that we've calculated those ratios, I'm going to delete the
         % heavy measurements for now. Maybe I'll need them in a future
         % version.
-        smallDS(smallDS.IsotopeLabelType=="heavy",:)=[];
+        smallDS(smallDS.TransitionNote=="heavy",:)=[];
         
         [~, idxDS, idxStandards] = intersect(smallDS.FileName,...
             [standardNames + ".raw"]);
@@ -250,25 +246,6 @@ for a = 1:length(compoundList.names)
             tData_unknownsOnly = NaN;
         end
         clear su ksu c ia ib
-       
-
-        %%% BMG - 7/14/2022 - Commented out
-        %try adding this...if the value is less than the meanBlank, change
-        %that to NaN...adding 5/18/2016
-        %YZ, 03/30/2023 use area instead of ratio to compare 
-        if ~isempty(meanBlank)
-            k = find(tData<meanBlank);
-            tData(k) =NaN;
-        end
-            clear k meanBlank
-        
-        %another option is to not allow values below the smallest 'good'
-        %value in the measured peak areas...add this 5/18/2016
-        if ~isempty(ydata)
-            k = find(tData< min(ydata(2:end)));
-            tData(k) = NaN;
-        end
-        clear k
         
         %need to deal with the idea of how big to allow the curve to be
         %and, what is the max value in my samples? should probably have at least one point above that
@@ -425,9 +402,10 @@ clear diaryFilename
         %compound at a time (5/19/2016)
         clear dataOut calcError calcConc tData
         
-%replace values less than the calculated LOD with NaN
-        k = find(goodData(a,:)<= compoundList.LOD(a));
-        goodData(a,k) = NaN;
+%replace values less than the calculated LOD with NaN         
+k = find(goodData(a,:)<= compoundList.LOD(a));
+    goodData_filtered = goodData;        
+    goodData_filtered(a,k) = NaN;
         clear k
        
     end
@@ -436,12 +414,11 @@ end
 
 clear a compound xdata ydata smallDS
 
-
-ds2 = table(goodData);
+ds1 = table(goodData);
+ds2 = table(goodData_filtered);
 ds3 = table(goodDataError);
-keepingAll = cat(2,compoundList,ds2,ds3);
+keepingAll = cat(2,compoundList,ds1,ds2,ds3);
 clear ds1 ds2 ds3 compoundList goodData goodDataError
-% NG 7/9/2019 should we...get rid of ds1 and rename?
 
 % %remove some unneeded variables:
 % keepingAll.indexMain = [];
