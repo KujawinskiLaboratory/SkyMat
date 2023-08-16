@@ -1,12 +1,3 @@
-%%%%Brianna M. Garcia - 07/14/222 version 2.0 (considerSkyline_v2.m)
-%%%%Script edited use the lowest concentration standard for fitering 
-%%%%concentrations less then this value rather than the previously used
-%%%%mean(blanks) where blanks were MQ water. This is due to baseline issues in
-%%%%Skyline resulting in high light/heavy area ratios for the MQ water which
-%%%%is not a problem on the TSQ. 
-
-function [sampleNames, keepGoodData] = considerSkyline(...
-    exportedSkyline, sampleInfoFile, ionMode, SILISType,nSILIS)
 % considerSkyline V0 : This function is called by riSkyline.m and is
 % responsible for quantification of metabolites via a five-point standard
 % curve. It calculates LOD and LOQ as well. Quantification is based on a
@@ -24,6 +15,12 @@ function [sampleNames, keepGoodData] = considerSkyline(...
 % 3. ionMode: can be "neg" or "pos"
 % 4. SILISType: can be 'heavyD5' or 'heavyC13'
 % 5. nSILIS: can be 1 or 2
+
+
+function [sampleNames, keepGoodData] = considerSkyline(...
+    exportedSkyline, sampleInfoFile, ionMode, SILISType,nSILIS)
+
+
 
 warning('off', 'MATLAB:table:ModifiedAndSavedVarnames');
 data = readtable(exportedSkyline, 'TreatAsEmpty', "#N/A");
@@ -103,12 +100,6 @@ switch ionMode
     case 'pos'
         kStandard = (strcmp('std', info.sType) & strcmp("pos", info.ionMode));           
 end
-setStandardConcentrations = unique(data.AnalyteConcentration);
-setStandardConcentrations(isnan(setStandardConcentrations))=[];
-
-% Much of what follows for a while is nearly verbatim from KL's original 
-% code. Her scheme of variable preallocation is something I didn't want to
-% mess with.
 
 standardNames = info.File_Name(kStandard);
 nStandards = sum(kStandard);
@@ -128,7 +119,6 @@ compoundList.intercept = zeros(length(compoundList.names),1);
 compoundList.SDslope = zeros(length(compoundList.names),1);
 compoundList.SDintercept = zeros(length(compoundList.names),1);
 compoundList.nPoints = zeros(length(compoundList.names),1);
-% compoundList.msuppression = zeros(length(compoundList.names),1);
 compoundList.LOD = zeros(length(compoundList.names),1);
 compoundList.LOQ = zeros(length(compoundList.names),1);
 
@@ -151,34 +141,29 @@ for a = 1:length(compoundList.names)
 %     end
     
     k = (strcmp(compoundList.names(a),data.MoleculeName) &...
-        (data.precursor==1 | data.TransitionNote=="heavy"));
+        (data.precursor==1 | string(data.IsotopeLabelType) == SILISType));
     
     if sum(k)>0
         smallDS = data(k,:);
         clear k
         
-        %These few lines may be unnecessary, as one can set sample type in
-        %Skyline.
         [~, ia, ib] =intersect(smallDS.FileName,[info.File_Name+".raw"]);
         smallDS.sType(ia,1) = info.sType(ib,1);
         clear c ia ib  
         
-        % For now, I'm independently calculating light-heavy ratios
+        % Calculating light-heavy ratios
         smallDS.LHR = zeros(height(smallDS),1);
-        %Yuting Zhu 03/28/23 use TransitionNote instead of IsotopeLabel
-        %Type to search for the peak areas since there are two types of
-        %heavy isotopes in this dataset
         
         if nSILIS == 2
             heavyArea = smallDS.Area(smallDS.IsotopeLabelType==...
             convertCharsToStrings(SILISType));
         elseif nSILIS == 1
-            heavyArea = smallDS.Area(smallDS.TransitionNote=="heavy");
+            heavyArea = smallDS.Area(smallDS.IsotopeLabelType==SILISType);
         end
         
-        lightArea = smallDS.Area(smallDS.TransitionNote=="light");
+        lightArea = smallDS.Area(smallDS.IsotopeLabelType=="light");
         if length(heavyArea) == length(lightArea)
-            smallDS.LHR(smallDS.TransitionNote=="light") = ...
+            smallDS.LHR(smallDS.IsotopeLabelType=="light") = ...
                 lightArea./heavyArea;
             smallDS.LHR(isinf(smallDS.LHR))=NaN;
         else 
@@ -189,40 +174,25 @@ for a = 1:length(compoundList.names)
         end
         
         % Now that we've calculated those ratios, I'm going to delete the
-        % heavy measurements for now. Maybe I'll need them in a future
-        % version.
-        smallDS(smallDS.TransitionNote=="heavy",:)=[];
+        % heavy measurements. 
+        smallDS(string(smallDS.IsotopeLabelType)==SILISType,:)=[];
         
         [~, idxDS, idxStandards] = intersect(smallDS.FileName,...
             [standardNames + ".raw"]);
         clear c
 
-        %what is the average value in the blanks? Need this for two reasons,
-        %(1) to get a zero value for the standard curve and (2) to see if the
-        %values in the samples are more/less than what is in the blanks
-        kb = find(strcmp(smallDS.SampleType,'Blank')==1);
+        % Set standard curve analyte concentration values 
+        setStandardConcentrations = smallDS.AnalyteConcentration;
+        setStandardConcentrations(isnan(setStandardConcentrations))=[];      
 
-        %for now, using AreaTop, might play around with that later
-
-        %%%%% BMG - 7/14/2022 - Commenting out due to baseline issues in 
-        meanBlank = (smallDS.LHR(kb)); clear kb
-        %meanBlank = max(0,mean(smallDS.SampleType(kb), 'omitnan'), 'omitnan'); 
-        clear kb
-
-
-      
         %%cheat and set the concentration range by hand for now
         xdata = setStandardConcentrations;
         ydata(1:length(xdata),1) = NaN;
+        
         %get all possible values from the standard curve
         ydata(idxStandards) = smallDS.LHR(idxDS);
-        % quality(idxStandards) = smallDS.quality(idxDS); % :(
-        % No quality filtering yet.
-        
         xdata = cat(1,xdata); 
-        
         ydata = cat(1,ydata); 
-        %clear meanBlank
         clear idxDS idxStandards 
         
         %remember, will also have cases where no data were found for select samples
@@ -232,7 +202,6 @@ for a = 1:length(compoundList.names)
         tArea(1:length(sampleNames),1) = NaN;
 
         tData(ib) = smallDS.LHR(ia);
-        %tArea(ib) = smallDS.Area(ia);
         clear c ia ib
         full=tData;
         
@@ -358,7 +327,7 @@ clear diaryFilename
                 plot(fitlm(xdata,ydata));
                 hold on 
                 plot(calcConc,tData,'ok','DisplayName','Samples')
-                title(string(compoundList.names{a}) + " " + string(ionMode))
+                title(string(compoundList.names{a}) + " " + string(ionMode) + " " + string(SILISType))
                 xlabel('Standard Concentration Added (ng/mL)')
                 ylabel('Peak Ratio (light/heavy)')
                 text(.95,.97, "R^2 =" + string(dataOut.r2),'Units','normalized')
@@ -380,6 +349,7 @@ clear diaryFilename
                 compoundList.SDintercept(a) = NaN;
                 compoundList.r2_line(a) = NaN;
                 compoundList.LOD(a) = NaN;
+                compoundList.LOQ(a) = NaN;
 
             end
             
@@ -393,6 +363,8 @@ clear diaryFilename
             compoundList.SDintercept(a) = NaN;
             compoundList.r2_line(a) = NaN;
             compoundList.LOD(a) = NaN;
+            compoundList.LOQ(a) = NaN;
+
 
         end
         %%%DE-BUGGING HERE
@@ -402,17 +374,21 @@ clear diaryFilename
         %compound at a time (5/19/2016)
         clear dataOut calcError calcConc tData
         
-%replace values less than the calculated LOD with NaN         
-k = find(goodData(a,:)<= compoundList.LOD(a));
-    goodData_filtered = goodData;        
-    goodData_filtered(a,k) = NaN;
-        clear k
-       
-    end
+    end 
     
 end
 
 clear a compound xdata ydata smallDS
+
+%replace values less than the calculated LOD with NaN         
+goodData_filtered = goodData;
+
+for a = 1:length(compoundList.names)
+    k = find(goodData_filtered(a,:)<= compoundList.LOD(a));
+    goodData_filtered(a,k) = NaN;
+    
+    clear k
+end 
 
 ds1 = table(goodData);
 ds2 = table(goodData_filtered);
@@ -437,15 +413,18 @@ keepGoodData = keepingAll(k,:);
 for a = 1:size(keepGoodData,1)
     for aa = 1:size(keepGoodData.goodData,2)
         tD = keepGoodData.goodData(a,aa);
-        tE = keepGoodData.goodDataError(a,aa);
+        tE = keepGoodData.goodData_filtered(a,aa);
+        tF = keepGoodData.goodDataError(a,aa);
         
         %can have a few options.
         if tD < 0 %easiest: sample is less than zero
             keepGoodData.goodData(a,aa)=0;
+            keepGoodData.goodData_filtered(a,aa)=0;
             keepGoodData.goodDataError(a,aa) = 0;
-        elseif tD - tE < 0 %does the error window include zero?
+        elseif tD - tF < 0 %does the error window include zero?
             %what is the window around it,
             keepGoodData.goodData(a,aa)=0;
+            keepGoodData.goodData_filtered(a,aa)=0;
             keepGoodData.goodDataError(a,aa) = 0;
             %             elseif tE./tD*100 > 66 %is the error percent above 66%?
             %                 %added 5/18/2016 bc getting too many things that have
@@ -455,7 +434,7 @@ for a = 1:size(keepGoodData,1)
             %                 keepGoodData.goodDataError(a,aa) = 0;
             
         end
-        clear tD tE aa
+        clear tD tE TF aa
     end
 end
 
@@ -470,7 +449,19 @@ for a = 1:size(i,1)
     end
      clear td ki k ts
 end
- clear a
+ clear a i
+
+%repeat for goodData_filtered
+ i = isnan(keepGoodData.goodData_filtered);
+for a = 1:size(i,1)
+    td = keepGoodData.goodData_filtered(a,:);
+    ts = sum(td(i(a,:)~=1));
+    if ts==0
+        keepGoodData.goodData_filtered(a,i(a,:)==1) = 0;
+    end
+     clear td ki k ts
+end
+ clear a i
 
 %now go ahead and delete the rows where all the datapoints are zero...this
 %assumes that the user is familiar with the list of compounds and knows
@@ -480,9 +471,8 @@ sfmc = sum(fm,2);
 k = find(sfmc==0);
 
 keepGoodData([k],:) = [];
-    
-clear fm sfmc k
-
+     
+clear fm sfmc k setStandardConcentrations
 
 
 end
