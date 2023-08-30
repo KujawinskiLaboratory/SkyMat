@@ -158,7 +158,7 @@ for a = 1:length(compoundList.names)
             heavyArea = smallDS.Area(smallDS.IsotopeLabelType==...
             convertCharsToStrings(SILISType));
         elseif nSILIS == 1
-            heavyArea = smallDS.Area(smallDS.IsotopeLabelType==SILISType);
+            heavyArea = smallDS.Area(smallDS.IsotopeLabelType==convertCharsToStrings(SILISType));
         end
         
         lightArea = smallDS.Area(smallDS.IsotopeLabelType=="light");
