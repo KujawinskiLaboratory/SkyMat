@@ -1,4 +1,4 @@
-function mtabData_nM = convertMoles(negTransitions, posTransitions, mtabNames, mtabData, volume_mL)
+function mtabData_nM = convertMoles(Transitions, mtabNames, mtabData, units, volume_mL)
 
 %% Convert from ng added to nM concentrations
 % This process involves reloading the transition list files and matching
@@ -12,22 +12,34 @@ function mtabData_nM = convertMoles(negTransitions, posTransitions, mtabNames, m
 % using the MWs from the Transition Lists to convert each compound to nM. 
 % 20230620 BMG 
 
-posInfo = readtable(posTransitions);
+tInfo = readtable(Transitions);
+
+posInfo = tInfo;
 posInfo(posInfo.isParent == 0,:) = [];
-MWp = [posInfo(:,1), posInfo(:,14)]; %please confirm column 14 is the MW or the code will not execute properly
-negInfo = readtable(negTransitions);
+pLog = strcmp(posInfo.ionMode,'positive');
+posInfo = posInfo(pLog,:);
+MWp = table([string(posInfo.("Molecule List name")),posInfo.StdMW]);
+MWp = splitvars(MWp,'Var1','NewVariableNames',{'CompoundName','StdMW'});
+MWp.StdMW = str2double(MWp.StdMW);
+
+clear pLog
+
+negInfo = tInfo;
 negInfo(negInfo.isParent == 0,:) = [];
-MWn = [negInfo(:,1), negInfo(:,14)]; %%please confirm column 14 is the MW or the code will not execute properly
+nLog = strcmp(posInfo.ionMode,'positive');
+negInfo = negInfo(nLog,:);
+MWn = table([string(negInfo.("Molecule List name")),negInfo.StdMW]);
+MWn = splitvars(MWn,'Var1','NewVariableNames',{'CompoundName','StdMW'});
+MWn.StdMW = str2double(MWn.StdMW);
+
+clear nLog
+
 MW = [MWp;MWn];
-clear MWp MWn
+
+clear MWp MWn 
+
 MW = unique(MW, 'rows');
 clear posInfo negInfo
-
-% Making both compound name columns into strings and removing the neg/pos
-% identifier.
-MW.CompoundName = string(MW.CompoundName);
-mtabNamesAgnostic = strrep(strrep(mtabNames, ' pos', ''),' neg','');
-
 
 % Time to index where each unique molecule is found in mtabNames.
 [~, iNames] = ismember(mtabNamesAgnostic, MW.CompoundName);
@@ -37,8 +49,11 @@ if sum(mtabNamesAgnostic == MW.CompoundName(iNames)) ~= length(mtabNames)
     disp("name mismatch")
     return
 end
+
 MWtoConvert = MW.StdMW(iNames);
-% convert from ng added to ng/L to nM
-mtabData_nM = ((mtabData./volume_mL).*1000)./MWtoConvert;
+
+% convert from mass to concentration (e.g., ng to nM)
+
+mtabData_conc = ((mtabData./volume_mL).*1000)./MWtoConvert;
 
 end
