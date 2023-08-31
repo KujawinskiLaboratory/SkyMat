@@ -15,11 +15,13 @@
 % 3. ionMode: can be "neg" or "pos"
 % 4. SILISType: can be 'heavyD5' or 'heavyC13'
 % 5. nSILIS: can be 1 or 2
+% 6. units: unit of standard curve (e.g., 'ng' or 'pg') 
+% 7. oFolder: Output folder location. This variable is defined in the code and will
+% create the folder and change directory to this folder. 
 
 
 function [sampleNames, keepGoodData] = considerSkyline(...
-    exportedSkyline, sampleInfoFile, ionMode, SILISType,nSILIS)
-
+    exportedSkyline, sampleInfoFile, ionMode, SILISType,nSILIS, units, oFolder)
 
 
 warning('off', 'MATLAB:table:ModifiedAndSavedVarnames');
@@ -58,23 +60,32 @@ compoundList = table(unique(data.MoleculeName, 'stable'),'VariableNames', {'name
 
 diaryFilename = append(ionMode,"_",SILISType,"_considerSkyline_flags.txt");
 
-diary (diaryFilename)
+if exist(append(oFolder, filesep, diaryFilename), 'file') == 2
+    fprintf('The file "%s" already exists in the working directory.\n', diaryFilename);
+    fprintf('Please delete the file before proceeding.\n');
+    error('Diary file already exists. Code execution halted.');
+else
+    % Create the diary file or perform other operations
+    diary(diaryFilename);
+    fprintf('Diary file "%s" created.\n', diaryFilename)
 
-for a = 1:length(compoundList.names)
+    for a = 1:length(compoundList.names)
     quant = (strcmp(compoundList.names(a), data.MoleculeName) &...
         ~strcmp("blank", data.SampleType) &...
         data.precursor==1);
     confirm = (strcmp(compoundList.names(a), data.MoleculeName) &...
         ~strcmp("blank", data.SampleType) &...
         data.precursor==0);
-    if sum(confirm)<sum(quant)
-        missing = 100*(sum(quant)-sum(confirm))/sum(quant);
-        disp(string([compoundList.names(a)+" is missing confirm ions in "+...
-            string(missing)+" percent of injections."]))
+        if sum(confirm)<sum(quant)
+            missing = 100*(sum(quant)-sum(confirm))/sum(quant);
+            disp(string([compoundList.names(a)+" is missing confirm ions in "+...
+                string(missing)+" percent of injections."]))
+        end
     end
-end
 
-diary off 
+diary off
+
+end 
 
 % Get rid of any files you don't want analyzed. We add a column in the
 % sequence file called "goodData" (boolean) and would typically only import
@@ -131,6 +142,16 @@ nRequired = 5;
 %calculate the areas for each compound for each sample, (3) then go find the
 %confirm ion for each compound in each sample and make sure I like where
 %things are
+
+curveFilename = append(ionMode,"_",SILISType, "_mtabs_stdCurves.pdf");
+
+if exist(append(oFolder, filesep, curveFilename), 'file') == 2
+    fprintf('The file "%s" already exists in the working directory.\n', curveFilename);
+    fprintf('Please delete the file before proceeding.\n');
+    error('PDF file already exists. Code execution halted.');
+else
+    % Create the diary file or perform other operations
+    fprintf('Calibration curve PDF file "%s" created.\n', curveFilename)
 
 for a = 1:length(compoundList.names)
     
@@ -321,19 +342,19 @@ clear diaryFilename
                 compoundList.LOQ(a) = 10*(dataOut.SDintercept./dataOut.slope);
 
 
-          if 1
+            if 1
                 set(groot,'defaultFigureVisible','off')  
                 figure
                 plot(fitlm(xdata,ydata));
                 hold on 
                 plot(calcConc,tData,'ok','DisplayName','Samples')
                 title(string(compoundList.names{a}) + " " + string(ionMode) + " " + string(SILISType))
-                xlabel('Standard Concentration Added (ng/mL)')
+                xlabel(append('Standard Concentration Added (', units, ")"))
                 ylabel('Peak Ratio (light/heavy)')
                 text(.95,.97, "R^2 =" + string(dataOut.r2),'Units','normalized')
                 xline(compoundList.LOD(a),'--g','LOD','DisplayName','LOD')
                 xline(compoundList.LOQ(a),'--b','LOQ','DisplayName','LOQ')
-                exportgraphics(gca, append(ionMode,"_",SILISType, "_mtabs_stdCurves.pdf"), 'Append',  true)
+                exportgraphics(gca, curveFilename, 'Append',  true)
                 hold off
                 close(gcf)
                 set(groot,'defaultFigureVisible','on')  
@@ -376,6 +397,8 @@ clear diaryFilename
         
     end 
     
+end
+
 end
 
 clear a compound xdata ydata smallDS

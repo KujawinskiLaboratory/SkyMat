@@ -10,37 +10,47 @@
 
 clear
 
-% Set filenames
-fileBase = 'testing_Compilation_CINAR'; % Set this, don't mess with the automatic date system.
+%% Set filenames
+fileBase = 'testing_Compilation_3isotopes'; % Set this, don't mess with the automatic date system.
 today = datestr(datetime('now'),'.yyyy.mm.dd');
 NameOfFile = string([fileBase,today,'_D5.mat']);
 
-% Set the sequence file here.
-wDir = 'Z:\Brianna\Projects\Skyline_MATLAB_codeCompilation\testing\';
-fName = 'CINAR_sequence_sheet.csv';
+%% Set the sequence file here.
+wDir = '/Volumes/KujLab/Brianna/Projects/Skyline_MATLAB_codeCompilation/testing/3_isotopes_Skyline/raw_file_example';
+fName = 'CMP_Yuting_Exomtab_pos_redo_022323.xlsx';
 sampleInfoFile = string([wDir filesep fName]);
 
 clear wDir
 
-% Set the location and names of the quantification tables exported from
-% Skyline
-sDir = 'Z:\Brianna\Projects\Skyline_MATLAB_codeCompilation\testing\';
-dfile_pos = string([sDir filesep 'CINAR_quant_pos.csv']);
+%% Set the location and names of the quantification tables exported from Skyline
+sDir = '/Volumes/KujLab/Brianna/Projects/Skyline_MATLAB_codeCompilation/testing/3_isotopes_Skyline/Skyline';
+dfile_pos = string([sDir filesep 'Skyline_pos_test_3isotopes_QuantTable_manipulated.csv']);
 dfile_neg = string([sDir filesep 'CINAR_quant_neg.csv']); 
 clear sDir
 
-% Move onto the processing for positive mode.
+%% Set directory for where SkyMat codes are - this will create an output folder for your results
+oDir = '/Volumes/whoi/dept/mcg/KujLab/Brianna/Projects/Skyline_MATLAB_codeCompilation/testing/3_isotopes_Skyline/SkyMat';
+oFolder = string([oDir filesep 'Output']);
+mkdir(oFolder);
+
+cd(oFolder);
+
+clear oDir 
+
+%% ConsiderSkyline processing for positive mode.
+
+units = 'ng'; %set unit for standard curve (e.g., ng or pg)
+
 [pos_D5.sNames, pos_D5.kgd] = considerSkyline(dfile_pos, sampleInfoFile,...
-    'pos','heavyD5',1);
+    'pos','heavyD5',2, units, oFolder);
+
+%% ConsiderSkyline processing for negative mode.
+
 [neg_D5.sNames, neg_D5.kgd] = considerSkyline(dfile_neg, sampleInfoFile,...
- 'neg','heavyD5',1);
+ 'neg','heavyD5',2, units, oFolder);
 
-
-%%
-
+%% MERGING DATA FROM TWO MODES
 clear fName fileBase today
-
-% MERGING DATA FROM TWO MODES
 
 mtabNames_D5 = sort(cat(1,[neg_D5.kgd.names + " neg"],[pos_D5.kgd.names + " pos"]));
 if length(unique(mtabNames_D5)) ~= length(mtabNames_D5)
@@ -162,9 +172,9 @@ mtabDetails_D5 = table();
 kgdNames = [pos_D5.kgd.names + " pos";neg_D5.kgd.names + " neg"]; 
 [c idx_New idx_Old] = intersect(mtabNames_D5,kgdNames);
 all_LOD = [pos_D5.kgd.LOD;neg_D5.kgd.LOD]; 
-LOD_ng_D5 = all_LOD(idx_Old);
+LOD_D5 = all_LOD(idx_Old);
 all_LOQ = [pos_D5.kgd.LOQ;neg_D5.kgd.LOQ]; 
-LOQ_ng_D5 = all_LOQ(idx_Old);
+LOQ_D5 = all_LOQ(idx_Old);
 
 
 clear c idx_New idx_Old all_LOD kgdNames all_LOQ
