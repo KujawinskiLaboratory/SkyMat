@@ -1,4 +1,4 @@
-function mtabData_nM = convertMoles(Transitions, mtabNames, mtabData, units, volume_mL)
+function mtabData_conc = convertMoles(Transitions, mtabNames, mtabData, units, volume_mL)
 
 %% Convert from ng added to nM concentrations
 % This process involves reloading the transition list files and matching
@@ -26,7 +26,7 @@ clear pLog
 
 negInfo = tInfo;
 negInfo(negInfo.isParent == 0,:) = [];
-nLog = strcmp(posInfo.ionMode,'positive');
+nLog = strcmp(negInfo.ionMode,'negative');
 negInfo = negInfo(nLog,:);
 MWn = table([string(negInfo.("MoleculeListName")),negInfo.StdMW]);
 MWn = splitvars(MWn,'Var1','NewVariableNames',{'CompoundName','StdMW'});
@@ -44,13 +44,15 @@ clear posInfo negInfo
 % Making both compound name columns into strings and removing the neg/pos
 % identifier.
 MW.CompoundName = string(MW.CompoundName);
+MW.CompoundName = stripName(MW.CompoundName);
 mtabNamesAgnostic = strrep(strrep(mtabNames, ' pos', ''),' neg','');
+mtabNamesAgnostic = stripName(mtabNamesAgnostic);
 
 % Time to index where each unique molecule is found in mtabNames.
-[~, iNames] = ismember(mtabNamesAgnostic, MW.CompoundName);
+[test, iNames] = ismember(mtabNamesAgnostic, MW.CompoundName);
 iNames(iNames==0) = [];
 % Use those indices to sort MW values.
-if sum(mtabNamesAgnostic == MW.CompoundName(iNames)) ~= length(mtabNames)
+if sum(strcmp(mtabNamesAgnostic,MW.CompoundName(iNames))) ~= length(mtabNames)
     disp("name mismatch")
     return
 end
