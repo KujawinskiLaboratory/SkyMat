@@ -164,6 +164,8 @@ end
 %now make an empty matrix for the data...will be all numbers so no need for
 %special format
 mtabData_D5 = zeros(size(mtabNames_D5,1),size(sInfo_D5,1));
+mtabData_D5_filtered = zeros(size(mtabNames_D5,1),size(sInfo_D5,1));
+
 %need to track some additional details:
 mtabDetails_D5 = table();
 
@@ -219,6 +221,7 @@ for a = 1:size(sInfo_D5,1)
 
             [c ia tIdx] =intersect(tName,pos_D5.sNames);
             mtabData_D5(idx_posNew,a) = pos_D5.kgd.goodData(idx_posOld,tIdx);
+            mtabData_D5_filtered(idx_posNew,a) = pos_D5.kgd.goodData_filtered(idx_posOld,tIdx);
             clear c ia tIdx tName
             
         elseif isequal(im,'neg')
@@ -227,6 +230,8 @@ for a = 1:size(sInfo_D5,1)
 
             [c ia tIdx] =intersect(tName,neg_D5.sNames);
             mtabData_D5(idx_negNew,a) = neg_D5.kgd.goodData(idx_negOld,tIdx);
+            mtabData_D5_filtered(idx_negNew,a) = neg_D5.kgd.goodData_filtered(idx_negOld,tIdx);
+
             clear c ia tIdx tName
         else 
             error('Something wrong')
@@ -269,4 +274,21 @@ clear a dfile_neg dfile_pos neg_info pos_info sampleInfoFile_neg ...
  
 save(NameOfFile)
 
+%% Use the convertMoles.m function to convert from mass to concentration 
+%(e.g., pg to pM)
+% input variables for function include:
+% tDir - directory where your transition list is found that includes
+% columns for isPrecursor and StdMW
+%tFile - the name of the Transition list file in .csv format.
+%mtabNames - this can be either _C13, _D5, or the _filtered version of
+%those
+%units - should be defined earlier as 'pg' or 'ng'
+%volume in mL - for example here '25' as a numeric input
+
+tDir = 'InsertHere';
+tFile = string([tDir filesep 'InsertHere']);
+
+mtabData_conc = convertMoles(tFile, mtabNames_D5, mtabData_D5, units, 25);
+
+save(NameOfFile)
 

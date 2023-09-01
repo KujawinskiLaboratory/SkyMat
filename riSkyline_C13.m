@@ -272,4 +272,20 @@ clear a dfile_neg dfile_pos neg_info pos_info sampleInfoFile_neg ...
  
 save(NameOfFile)
 
+%% Use the convertMoles.m function to convert from mass to concentration 
+%(e.g., pg to pM)
+% input variables for function include:
+% tDir - directory where your transition list is found that includes
+% columns for isPrecursor and StdMW
+%tFile - the name of the Transition list file in .csv format.
+%mtabNames - this can be either _C13, _D5, or the _filtered version of
+%those
+%units - should be defined earlier as 'pg' or 'ng'
+%volume in mL - for example here '25' as a numeric input
 
+tDir = 'InsertHere';
+tFile = string([tDir filesep 'InsertHere']);
+
+mtabData_conc = convertMoles(tFile, mtabNames_C13, mtabData_C13, units, 25);
+
+save(NameOfFile)
