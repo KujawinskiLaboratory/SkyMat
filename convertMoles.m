@@ -18,7 +18,7 @@ posInfo = tInfo;
 posInfo(posInfo.isParent == 0,:) = [];
 pLog = strcmp(posInfo.ionMode,'positive');
 posInfo = posInfo(pLog,:);
-MWp = table([string(posInfo.("Molecule List name")),posInfo.StdMW]);
+MWp = table([string(posInfo.("MoleculeListName")),posInfo.StdMW]);
 MWp = splitvars(MWp,'Var1','NewVariableNames',{'CompoundName','StdMW'});
 MWp.StdMW = str2double(MWp.StdMW);
 
@@ -28,7 +28,7 @@ negInfo = tInfo;
 negInfo(negInfo.isParent == 0,:) = [];
 nLog = strcmp(posInfo.ionMode,'positive');
 negInfo = negInfo(nLog,:);
-MWn = table([string(negInfo.("Molecule List name")),negInfo.StdMW]);
+MWn = table([string(negInfo.("MoleculeListName")),negInfo.StdMW]);
 MWn = splitvars(MWn,'Var1','NewVariableNames',{'CompoundName','StdMW'});
 MWn.StdMW = str2double(MWn.StdMW);
 
@@ -40,6 +40,11 @@ clear MWp MWn
 
 MW = unique(MW, 'rows');
 clear posInfo negInfo
+
+% Making both compound name columns into strings and removing the neg/pos
+% identifier.
+MW.CompoundName = string(MW.CompoundName);
+mtabNamesAgnostic = strrep(strrep(mtabNames, ' pos', ''),' neg','');
 
 % Time to index where each unique molecule is found in mtabNames.
 [~, iNames] = ismember(mtabNamesAgnostic, MW.CompoundName);
