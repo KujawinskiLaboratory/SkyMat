@@ -164,6 +164,7 @@ end
 %now make an empty matrix for the data...will be all numbers so no need for
 %special format
 mtabData_C13 = zeros(size(mtabNames_C13,1),size(sInfo_C13,1));
+mtabData_C13_filtered = zeros(size(mtabNames_C13,1),size(sInfo_C13,1));
 %need to track some additional details:
 mtabDetails_C13 = table();
 
@@ -219,6 +220,7 @@ for a = 1:size(sInfo_C13,1)
 
             [c ia tIdx] =intersect(tName,pos_C13.sNames);
             mtabData_C13(idx_posNew,a) = pos_C13.kgd.goodData(idx_posOld,tIdx);
+            mtabData_C13_filtered(idx_posNew,a) = pos_C13.kgd.goodData_filtered(idx_posOld,tIdx);
             clear c ia tIdx tName
             
         elseif isequal(im,'neg')
@@ -227,6 +229,7 @@ for a = 1:size(sInfo_C13,1)
 
             [c ia tIdx] =intersect(tName,neg_C13.sNames);
             mtabData_C13(idx_negNew,a) = neg_C13.kgd.goodData(idx_negOld,tIdx);
+            mtabData_C13_filtered(idx_negNew,a) = neg_C13.kgd.goodData_filtered(idx_negOld,tIdx);
             clear c ia tIdx tName
         else 
             error('Something wrong')
