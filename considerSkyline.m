@@ -5,30 +5,38 @@
 % '0' in its name. These were not derivatized by benzoyl chloride and
 % therefore would not have a heavy label. 
 
-% INPUT %
-% 1. exportedSkyline: name of the *.csv exported from Skyline. Must contain
-% at least columns for peak area (both light and heavy), sample type, sample
-% filename, molecule name, and "analyte concentration" (this is for known
-% concentrations like standards and spikes).
-% 2. sampleInfoFile: the modified sequence file containing file names and
-% condition information (*.xslx)
-% 3. ionMode: can be "neg" or "pos"
-% 4. SILISType: can be 'heavyD5' or 'heavyC13'
-% 5. nSILIS: can be 1 or 2
-% 6. units: unit of standard curve (e.g., 'ng' or 'pg') 
-% 7. oFolder: Output folder location. This variable is defined in the code and will
-% create the folder and change directory to this folder. 
-
-
 function [sampleNames, keepGoodData] = considerSkyline(...
     exportedSkyline, sampleInfoFile, ionMode, SILISType,nSILIS, units, oFolder)
 
+% INPUT %
+% 1. exportedSkyline: name of the *.csv exported from Skyline. Must contain
+%   at least columns for peak area (both light and heavy), sample type, sample
+%   filename, molecule name, and "analyte concentration" (this is for known
+%   concentrations like standards and spikes).
+% 2. sampleInfoFile: the modified sequence file containing file names and
+%   condition information (*.xslx)
+% 3. ionMode: can be "neg" or "pos"
+% 4. SILISType: can be 'heavyD5' or 'heavyC13'
+% 5. nSILIS: can be 1 or 2. This function gets run twice per isotope (once
+%   per ionMode), so even though you specify a single isotope type in the 
+%   function call, specify '2' for this parameter if you've got both 
+%   labels in your dataset.
+% 6. units: unit of standard curve (e.g., 'ng' or 'pg') 
+% 7. oFolder: Output folder location. This variable is defined in the code and will
+%   create the folder and change directory to this folder. 
+
+% OUTPUT %
+% 1. sampleNames: A string vector containing the sample names for each
+%   calibrated measurement.
+% 2. keepGoodData: A struct containing information such as calibrated
+%   concentrations, calibration metrics, and flags.
 
 warning('off', 'MATLAB:table:ModifiedAndSavedVarnames');
+% Skyline has a special way of exporting empty cells, which we change to
+% NaN here.
 data = readtable(exportedSkyline, 'TreatAsEmpty', "#N/A");
 info = readtable(sampleInfoFile); 
 %reduce info to only samples in the current analysis.
-
 info = info(strcmp(ionMode, info.ionMode),:); 
 
 % Now we have read the two files necessary for quantification. Since we're
@@ -38,14 +46,6 @@ data.precursor = (data.FragmentIonType == "precursor" &...
 
 compoundList = table(unique(data.MoleculeName, 'stable'),'VariableNames', {'names'});
 
-% What considerMAVEN did here was to make sure that all molecules measured
-% had a confirm fragment--for the way we're using Lumos data, we have
-% quantification by the precursor and one or more confirm MS2 fragments, as
-% opposed to MS2 fragments for both the quant and confirm ions. It would be
-% useful to check that the confirm ions appear. At this stage, it does not
-% appear that I *have* reliable confirm ions for all my targets. 
-% To-do: get a reliable confirm for all ions. 
-
 % CHECKING CONFIRM IONS
 % Skyline does not output data rows where it doesn't find the ion, unlike
 % our prior approach to MAVEN, where ions that aren't found simply don't
@@ -54,12 +54,15 @@ compoundList = table(unique(data.MoleculeName, 'stable'),'VariableNames', {'name
 % transition is found. 
 % *This means that for a given ion, #samples does not necessarily equal
 % #records. 
-% Here I will check for the confirm ion by
-% evaluating if the confirm had a nonzero peak area in *all* non-blank
-% samples. 
+% Here I will check for the confirm ion by evaluating if the confirm had a 
+% nonzero peak area in *all* non-blank samples. I have not made it a
+% requirement for calibration that a confirm is present, as Skyline isn't
+% as good at picking up the MS2 fragments at low concentrations. Best to
+% check in MZMine and not rely on this step. 
 
+% This section, rather than printing to the cmd window, will for each
+% compound write to the diary textfile if a compound is missing MS2 peaks. 
 diaryFilename = append(ionMode,"_",SILISType,"_considerSkyline_flags.txt");
-
 if exist(append(oFolder, filesep, diaryFilename), 'file') == 2
     fprintf('The file "%s" already exists in the working directory.\n', diaryFilename);
     fprintf('Please delete the file before proceeding.\n');
@@ -91,7 +94,7 @@ end
 % sequence file called "goodData" (boolean) and would typically only import
 % the "good" files into Skyline, but this is a place to make sure we only
 % have what we need. 
-pruneData = 1;
+pruneData = 1; % Generally should always be 1.
 if pruneData
     badNames = info.File_Name(info.goodData ==0) + ".raw";
     info(info.goodData==0, :) = [];
@@ -102,9 +105,9 @@ if pruneData
 end
 clear badNames pruneData
 
-%how many possible standards are there, and where will they be?
-%KL 10/20/2016 now need to look for positive or negative set bc UPLC data
-%has two standard curves
+% How many possible standards are there, and where will they be?
+% KL 10/20/2016 now need to look for positive or negative set bc UPLC data
+% has two standard curves
 switch ionMode
     case 'neg'
         kStandard = (strcmp('std', info.sType) & strcmp("neg", info.ionMode));           
@@ -112,17 +115,20 @@ switch ionMode
         kStandard = (strcmp('std', info.sType) & strcmp("pos", info.ionMode));           
 end
 
+% Set up indices and names to point to the standards and samples.
 standardNames = info.File_Name(kStandard);
 nStandards = sum(kStandard);
-
 kSample = strcmp('Unknown',info.Sample_Type);
 sampleNames = info.File_Name(kSample);
 nSamples =sum(kSample);
 clear kStandard kSample
 
+% Set up goodData, which is (numCompounds x numSamples)
 goodData(1:length(compoundList.names),nSamples) = NaN; 
 goodDataError = goodData;
 
+% Add variables to the compound list concerning standard curve and goodness
+% of fit.
 warning('off', 'stats:dataset:subsasgn:DefaultValuesAddedVariable');
 compoundList.r2_line = zeros(length(compoundList.names),1);
 compoundList.slope = zeros(length(compoundList.names),1);
@@ -138,13 +144,11 @@ compoundList.LOQ = zeros(length(compoundList.names),1);
 % curves).
 nRequired = 5;
 
-%go through one compound at a time, (1) make the standard curve, (2) use that to
-%calculate the areas for each compound for each sample, (3) then go find the
-%confirm ion for each compound in each sample and make sure I like where
-%things are
-
+% This PDF will contain graphs of the standard curves as fitted, as well as
+% prediction intervals. 
+% NPG 19 Sept 2023: Really should redo these sections so that it doesn't
+% stop the code completely if the file exists. 
 curveFilename = append(ionMode,"_",SILISType, "_mtabs_stdCurves.pdf");
-
 if exist(append(oFolder, filesep, curveFilename), 'file') == 2
     fprintf('The file "%s" already exists in the working directory.\n', curveFilename);
     fprintf('Please delete the file before proceeding.\n');
@@ -153,21 +157,25 @@ else
     % Create the diary file or perform other operations
     fprintf('Calibration curve PDF file "%s" created.\n', curveFilename)
 
+% Go through one compound at a time, (1) make the standard curve, (2) use that to
+% calculate the concentrations for each sample.
 for a = 1:length(compoundList.names)
     
     clear xdata ydata
-%     if strmatch(compoundList.names(a),'glutamic acid 0', 'exact')
-%         %can set debugging to stop here based on compound name
-%         %compoundList.name(a)
-%     end
     
+    % This index pulls all observations of a molecule or its SIL-IS as
+    % specified in the inputs. 
     k = (strcmp(compoundList.names(a),data.MoleculeName) &...
         (data.precursor==1 | string(data.IsotopeLabelType) == SILISType));
     
+    % Call the rest only if the molecule is actually in the exported data.
     if sum(k)>0
+        % smallDS is the small dataset extracted for just this molecule.
         smallDS = data(k,:);
         clear k
         
+        % Match record numbers and unite the sample type column without
+        % merging the two datasets.
         [~, ia, ib] =intersect(smallDS.FileName,[info.File_Name+".raw"]);
         smallDS.sType(ia,1) = info.sType(ib,1);
         clear c ia ib  
@@ -175,6 +183,7 @@ for a = 1:length(compoundList.names)
         % Calculating light-heavy ratios
         smallDS.LHR = zeros(height(smallDS),1);
         
+        % Hey, wait, do we need this if statement?
         if nSILIS == 2
             heavyArea = smallDS.Area(smallDS.IsotopeLabelType==...
             convertCharsToStrings(SILISType));
@@ -182,6 +191,8 @@ for a = 1:length(compoundList.names)
             heavyArea = smallDS.Area(smallDS.IsotopeLabelType==convertCharsToStrings(SILISType));
         end
         
+        % Find light peak areas and take the ratios. You can get Skyline to
+        % do this for you, but we do it in the code here.
         lightArea = smallDS.Area(smallDS.IsotopeLabelType=="light");
         if length(heavyArea) == length(lightArea)
             smallDS.LHR(smallDS.IsotopeLabelType=="light") = ...
@@ -202,52 +213,46 @@ for a = 1:length(compoundList.names)
             [standardNames + ".raw"]);
         clear c
 
-        % Set standard curve analyte concentration values 
+        % Set standard curve analyte concentration values based on what was
+        % entered in Skyline
         setStandardConcentrations = smallDS.AnalyteConcentration;
         setStandardConcentrations(isnan(setStandardConcentrations))=[];      
-
-        %%cheat and set the concentration range by hand for now
         xdata = setStandardConcentrations;
         ydata(1:length(xdata),1) = NaN;
         
-        %get all possible values from the standard curve
+        % Get all possible values from the standard curve
         ydata(idxStandards) = smallDS.LHR(idxDS);
         xdata = cat(1,xdata); 
         ydata = cat(1,ydata); 
         clear idxDS idxStandards 
         
-        %remember, will also have cases where no data were found for select samples
-        %so need to setup the spacers in there are well
+        % Remember, will also have cases where no data were found for 
+        % select samples so need to setup the spacers in there.
+        % "tData" is basically the data to be fed into the calibrated
+        % equation. 
         [~, ia, ib] = intersect(smallDS.FileName,[sampleNames+".raw"]);
         tData(1:length(sampleNames),1) = NaN;
-        tArea(1:length(sampleNames),1) = NaN;
-
         tData(ib) = smallDS.LHR(ia);
         clear c ia ib
-        full=tData;
         
         su = strcmp(info.sType,'rep');
         ksu = find(su==1);
-        [c, ia, ib] = intersect([info.File_Name(ksu)+".raw"],smallDS.FileName);
-        %6/26/2018 can have the case where no unknowns get out of MAVEN...
+        [c, ~, ib] = intersect([info.File_Name(ksu)+".raw"],smallDS.FileName);
+        % This is probably redundant but checks to see if the export was 
+        % blank. "unknownsOnly" omits pools.
         if ~isempty(c)
             tData_unknownsOnly = smallDS.LHR(ib);
         else
             tData_unknownsOnly = NaN;
         end
-        clear su ksu c ia ib
+        clear su ksu c ib
         
-        %need to deal with the idea of how big to allow the curve to be
-        %and, what is the max value in my samples? should probably have at least one point above that
-        %m = max(tData);
-        %kMax = find(ydata <= m);
-        %changing how I set the range of the standard curve
-        %m = max(tData_unknownsOnly, 'omitnan');
-        % 03.29.2023 YZ edited the script (I need to update my MATLAB
-        % version,'omitnan'does not work for now)
+        % We need to make the calibration curve as close to the range of
+        % the data, and the first step is finding what the LHR of our max
+        % sample is. 
         m = nanmax(tData_unknownsOnly);
-        %if all the unknowns fail the quality check, this next step
-        %will fail. Haven't seen this until now (6/26/2018)
+        % If all the unknowns fail the quality check, this next step
+        % will fail. Haven't seen this until now (6/26/2018)
         if isnan(m)
             %easiest to make kMax empty
             kMax = [];
@@ -256,36 +261,37 @@ for a = 1:length(compoundList.names)
         end
         clear tData_unknownsOnly
 
-diary on        
+diary on    % Record what happens here, for example if something is above 
+            % the standard curve in one or more samples (happens more than
+            % you'd think).
 
         if ~isempty(kMax)
-            %have at least one point on the curve
+            % Have at least one point on the curve.
             if isequal(kMax(end),length(ydata))
-                %already at the end of the standard curve...so use all the points
-                %do nothing...but send up a flag since the data are above
-                %the standard curve
+                % Already at the end of the standard curve...so use all the points
+                % do nothing...but send up a flag since the data are above
+                % the standard curve.
                 disp([compoundList.names{a} ' is above the standard curve'])
-                %fprintf('here')
             elseif isequal(kMax(end)+1,length(ydata))
-                %only one more above the points in the standard curve, use all the
-                %points
+                % Only one more above the points in the standard curve, use all the
+                % points.
             elseif isequal(kMax,1)
-                %data are at the low end of the standard curve, but let's require
-                %more points above my data to get a reasonable curve...
+                % Data are at the low end of the standard curve, but let's require
+                % more points above my data to get a reasonable curve...
                 xdata = xdata(1:nRequired);
                 ydata = ydata(1:nRequired);
             elseif length(kMax)+2  < nRequired
-                % use the number of points sent in nRequired
+                % Use the number of points sent in nRequired.
                 ydata = ydata(1:nRequired);
                 xdata = xdata(1:nRequired);
             elseif length(kMax) + 1 < nRequired
-                %use the standard curve to one point beyond the range of my
-                %samples
+                % Use the standard curve to one point beyond the range of my
+                % samples
                 ydata = ydata(1:kMax(end)+1);
                 xdata = xdata(1:kMax(end)+1);
             else
-                %use the standard curve to one point beyond the range of my
-                %samples
+                % Use the standard curve to one point beyond the range of my
+                % samples
                 ydata = ydata(1:kMax(end)+1);
                 xdata = xdata(1:kMax(end)+1);
                 
@@ -302,37 +308,46 @@ diary off
 
 clear diaryFilename
 
-        %need at least three points to make a curve AND get the error estimates
+        % Need at least three points to make a curve AND get the error 
+        % estimates. These next couple lines actually cause a lot of
+        % errors. Usually, this a result of the sequence file being
+        % formatted wrong such that xdata and ydata don't end up the same
+        % length.
         try
             show = [xdata ydata];
         catch
             fprintf('here')
         end
+        % For whatever reason we screen NaNs out again. There probably are
+        % none by this point. 
         i = isnan(show);
         sfmi = sum(i,2);
         k = find(sfmi==0);
         xdata = xdata(k);
         ydata = ydata(k);
         clear show i sfmi k
-        %this will be helpful bc will show where I had <2 points
-        %remember that this also takes into account the rules I set above about
-        %how wide to make the standard curve
+
+        % This will be helpful bc will show where I had <2 points.
+        % Remember that this also takes into account the rules I set above about
+        % how wide to make the standard curve.
         compoundList.nPoints(a) = length(ydata);
         
-        if length(xdata)>2
+        if length(xdata)>2 % Don't make a line with fewer than 3 points.
             
-            dataOut = getErrors(xdata,ydata); %errors for the standard curve
+            % See getErrors subfunction at end. This and useErrors together
+            % perform a regression, get goodness-of-fit, and then use it to
+            % calibrate unknown concentrations.
+            dataOut = getErrors(xdata,ydata);
             [calcError, calcConc] = useErrors(dataOut,tData); %then calculate the concentrations
-            
 
-            %add in a check, if the slope is negative, this is garbage
+
+            % If the slope is negative, this is garbage. If it's good,
+            % store information about both calculated concentrations and
+            % the cal curve in memory. 
             if dataOut.slope > 0
-                %this will be the same number of rows as unCompounds
-                %(?? - NG)
-                %the number of columns will match the number of unknown samples
                 goodData(a,:) = calcConc;
                 goodDataError(a,:) = calcError; %can get percent by calcError./calcConc
-                
+
                 compoundList.slope(a) = dataOut.slope;
                 compoundList.intercept(a) = dataOut.intercept;
                 compoundList.SDslope(a) = dataOut.SDslope;
@@ -342,28 +357,31 @@ clear diaryFilename
                 compoundList.LOQ(a) = 10*(dataOut.SDintercept./dataOut.slope);
 
 
-            if 1
-                set(groot,'defaultFigureVisible','off')  
-                figure
-                plot(fitlm(xdata,ydata));
-                hold on 
-                plot(calcConc,tData,'ok','DisplayName','Samples')
-                title(string(compoundList.names{a}) + " " + string(ionMode) + " " + string(SILISType))
-                xlabel(append('Standard Concentration Added (', units, ")"))
-                ylabel('Peak Ratio (light/heavy)')
-                text(.95,.97, "R^2 =" + string(dataOut.r2),'Units','normalized')
-                xline(compoundList.LOD(a),'--g','LOD','DisplayName','LOD')
-                xline(compoundList.LOQ(a),'--b','LOQ','DisplayName','LOQ')
-                exportgraphics(gca, curveFilename, 'Append',  true)
-                hold off
-                close(gcf)
-                set(groot,'defaultFigureVisible','on')  
+                if 1 % You can turn off the plotting if you like.
+                    % This plots the standard curve. Ironically, it refits it
+                    % completely using MATLAB's built in functions.
+                    set(groot,'defaultFigureVisible','off')
+                    figure
+                    plot(fitlm(xdata,ydata));
+                    hold on
+                    plot(calcConc,tData,'ok','DisplayName','Samples')
+                    title(string(compoundList.names{a}) + " " + string(ionMode) + " " + string(SILISType))
+                    xlabel(append('Standard Concentration Added (', units, ")"))
+                    ylabel('Peak Ratio (light/heavy)')
+                    text(.95,.97, "R^2 =" + string(dataOut.r2),'Units','normalized')
+                    xline(compoundList.LOD(a),'--g','LOD','DisplayName','LOD')
+                    xline(compoundList.LOQ(a),'--b','LOQ','DisplayName','LOQ')
+                    exportgraphics(gca, curveFilename, 'Append',  true)
+                    hold off
+                    close(gcf)
+                    set(groot,'defaultFigureVisible','on')
 
-            end
+                end
 
             else
+                % slope is less than zero
                 goodData(a,:) = NaN;
-                goodDataError(a,:) = NaN; 
+                goodDataError(a,:) = NaN;
                 compoundList.slope(a) = NaN;
                 compoundList.intercept(a) = NaN;
                 compoundList.SDslope(a) = NaN;
@@ -375,7 +393,7 @@ clear diaryFilename
             end
             
         else
-            %not enough points to make a standard curve
+            % not enough points to make a standard curve
             goodData(a,:) = NaN;
             goodDataError(a,:) = NaN;
             compoundList.slope(a) = NaN;
@@ -388,11 +406,6 @@ clear diaryFilename
 
 
         end
-        %%%DE-BUGGING HERE
-        %compound
-        %put breakpoint at the next line and uncomment out the
-        %compound line above if troubleshooting one
-        %compound at a time (5/19/2016)
         clear dataOut calcError calcConc tData
         
     end 
@@ -403,7 +416,7 @@ end
 
 clear a compound xdata ydata smallDS
 
-%replace values less than the calculated LOD with NaN         
+% Replace values less than the calculated LOD with NaN         
 goodData_filtered = goodData;
 
 for a = 1:length(compoundList.names)
@@ -461,8 +474,9 @@ for a = 1:size(keepGoodData,1)
     end
 end
 
-%can also have the case where I am now left with zeros and NaNs only. Set
-%them all equal to zero
+% If a column ends up being a mix of zeros and NaNs, set all to zero (maybe
+% not the best practice.
+% Note, this with the following section could be turned into a single loop.
 i = isnan(keepGoodData.goodData);
 for a = 1:size(i,1)
     td = keepGoodData.goodData(a,:);
@@ -486,9 +500,9 @@ for a = 1:size(i,1)
 end
  clear a i
 
-%now go ahead and delete the rows where all the datapoints are zero...this
-%assumes that the user is familiar with the list of compounds and knows
-%about compounds that could have been in the samples but were all zero.
+% Now ahead and *delete* the rows where all the datapoints are zero...this
+% assumes that the user is familiar with the list of compounds and knows
+% about compounds that could have been in the samples but were all zero.
 fm = logical(keepGoodData.goodData~=0);
 sfmc = sum(fm,2);
 k = find(sfmc==0);
