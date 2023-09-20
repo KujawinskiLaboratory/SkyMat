@@ -52,28 +52,33 @@ units = 'ng'; %set unit for standard curve (e.g., ng or pg)
 %% MERGING DATA FROM TWO MODES
 clear fName fileBase today
 
+% The traditional approach here is to take both metabolite lists, positive
+% and negative mode, and keep both sets of data and append the ion mode to
+% the metabolite name. In the future, there may be a different routine that
+% automatically calibrates each metabolite at each sample using both the
+% mode and isotope that give the tightest error bounds, eliminating this
+% step. 
 mtabNames_C13 = sort(cat(1,[neg_C13.kgd.names + " neg"],[pos_C13.kgd.names + " pos"]));
 if length(unique(mtabNames_C13)) ~= length(mtabNames_C13)
     error('Something is wrong - duplicate names in the list of metabolites')
 end
 
-%for the pooled samples (and perhapds others), I will have duplicate sets 
-%of names with either _pos or _neg appended; 
+% For the pooled samples (and perhapds others), I will have duplicate sets 
+% of names with either _pos or _neg appended; 
 tInfo_C13 = readtable(sampleInfoFile);
 clear sampleInfoFile
 
-%before I dive into the unknowns, remove anything that has goodData = 0
+% Before I dive into the unknowns, remove anything that has goodData = 0
+% This step does take place within considerSkyline, but we're re-reading
+% the sample info file here to create permanent variables for the
+% workspace, which need to be re-pruned.
 k = find(tInfo_C13.goodData==0);
 tInfo_C13(k,:) = [];
 clear k
 
-%%first, go through and iterate through the pooled samples
-%%to provide numbers for these (otherwise will have duplicate
-%%names)
-%%NOTE: update names of pooled samples here
-%s = strcmp(tInfo.Sample_Name,'pool');
-
-%YZ 03.31.2023 use contains instead of strcmp so can find the pooled in my dataset
+% First, go through and iterate through the pooled samples
+% to provide numbers for these (otherwise will have duplicate
+% names). Need to do separately for both modes.
 s = contains(tInfo_C13.Sample_Name,'pool') & contains(tInfo_C13.Sample_Name,'pos');
 ks = find(s==1);
 for a = 1:length(ks)
@@ -92,8 +97,8 @@ for a = 1:length(ks)
 end
 clear a ks a
 
-%now find the Unknown...should have the same number for positive and
-%negative ion mode bc have pruned out the different QC samples already
+% Now find the Unknown...should have the same number for positive and
+% negative ion mode.
 s = strcmp(tInfo_C13.Sample_Type,'Unknown');
 sp = strcmp(tInfo_C13.ionMode,'pos');
 ksp = (find(s==1 & sp==1));
@@ -105,13 +110,18 @@ if ~isequal(length(ksp),length(ksn))
 end
 clear s sp sn ksp ksn
 
-%%parse out the names. Use this to figure out the unique samples and setup
-%%a new matrix that I can propagate with the metabolites from both positive
-%%and negative ion mode. Bit of a hack, and growing worse.
+% Parse out the names. Use this to figure out the unique samples and setup
+% a new matrix that I can propagate with the metabolites from both positive
+% and negative ion mode. Bit of a hack, and growing worse.
+% NPG 20 Sept 2023: I think this whole section might need to be removed.
+% We're adding extra columns for parsing out sample metadata, which is
+% something I do in downstream processing or have straight-up in the sample
+% info table. It doesn't really do much good to have this "hack" present in
+% what's supposed to be the basic processing script. 
 nrow = size(tInfo_C13,1);
 tInfo_C13.type = repmat({''},nrow,1);
 tInfo_C13.cName = repmat({''},nrow,1);
-%examples of additional columns used in the BIOS-SCOPE project
+% examples of additional columns used in the BIOS-SCOPE project
 % tInfo.cruise = repmat({''},nrow,1);
 % tInfo.cast = zeros(nrow,1);
 % tInfo.niskin = zeros(nrow,1);
@@ -122,18 +132,7 @@ for a = 1:nrow
     if strcmp(tInfo_C13.Sample_Type{a},'Unknown') %only do unknowns      
         one = tInfo_C13.Sample_Name{a};
         r_pooled = regexp(one,'pool');
-        r_spiked = regexp(one,'NOSPIKE');
-
-            if r_spiked
-                %pooled with 500 ng/ml spike
-                if 0
-                    %keep it
-                    tInfo_C13.type(a) = {'spiked'};
-                    tInfo_C13.cName(a) = {'spiked'};
-                else
-                    %skip
-                end
-            elseif r_pooled
+            if r_pooled
                 %pooled sample
                 tInfo_C13.type(a) = {'pooled'};
                 %put the number of this pooled sample into 'addedInfo'
@@ -153,23 +152,19 @@ for a = 1:nrow
 end
 clear a nrow
 
-sInfo_C13 = table;
-sInfo_C13.cName = unique(tInfo_C13.cName);
-%the first row of this will be empty, delete that
-if isequal(sInfo_C13.cName(1),{''})
-    sInfo_C13(1,:) = [];
-end
+% NPG 20 Sept 2023: This used to take five lines. Not sure why. But, this
+% makes a table with the sample names as the first column. 
+sInfo_C13 = table(unique(tInfo_C13.cName), 'VariableNames','cName');
 
-
-%now make an empty matrix for the data...will be all numbers so no need for
-%special format
+% Preallocate double-type matrix for metabolite data.
 mtabData_C13 = zeros(size(mtabNames_C13,1),size(sInfo_C13,1));
 mtabData_C13_filtered = zeros(size(mtabNames_C13,1),size(sInfo_C13,1));
-%need to track some additional details:
+
+% Need to track some additional details; namely which file came from which
+% ion mode.
 mtabDetails_C13 = table();
 
-%get the index for rows for positive AND negative mtabs:
-
+% Get the index for rows for positive AND negative mtabs and reorder. 
 kgdNames = [pos_C13.kgd.names + " pos";neg_C13.kgd.names + " neg"]; 
 [c idx_New idx_Old] = intersect(mtabNames_C13,kgdNames);
 all_LOD = [pos_C13.kgd.LOD;neg_C13.kgd.LOD]; 
@@ -193,14 +188,23 @@ sInfo_C13.runOrder_neg(:,1) = 0;
 sInfo_C13.FileName_pos(:,1) = {''};
 sInfo_C13.FileName_neg(:,1) = {''};
 
+% This section takes the ordered sample names and metabolite names and
+% reshuffles the mode-specific calibrated measurements into a single
+% matrix. It also contains some of the metadata hack from earlier that
+% should be removed (commented lines).
 for a = 1:size(sInfo_C13,1)
     s = strcmp(sInfo_C13.cName(a),tInfo_C13.cName);
     ks = find(s==1);
+    % The section starts by searching a sample name, anticipating both a
+    % pos and neg mode for each sample. 
     if length(ks) ~= 2
         error('Something is wrong, should be two of each')
+        % If you get this error, check to see if your goodData column is
+        % properly pruning your data so that there's the same number of
+        % files for each mode, AND that all your cNames are actually the
+        % same across modes--typos happen. 
     end
     
-    %some variant of this:
     for aa = 1:2
         %propagate sInfo with the cast/depth/etc. information, only do once
 %         if aa == 1
@@ -212,7 +216,8 @@ for a = 1:size(sInfo_C13,1)
 %             sInfo.depth(a) = tInfo.depth(ks(aa));
 %             sInfo.addedInfo(a) = tInfo.addedInfo(ks(aa));
 %         end
-        
+        % Two cases, because depending on the ionMode, we're shifting data
+        % from a different struct into the data matrices.
         im = tInfo_C13.ionMode{ks(aa)};
         if isequal(im,'pos')
             tName = tInfo_C13.File_Name(ks(aa));
@@ -244,6 +249,7 @@ clear idx_*
 
 clear r s
 
+% Sort the actual datafile names into their respective ion mode columns. 
 for a = 1: size(sInfo_C13,1)
     %do positive ion mode first
     gc = sInfo_C13{a,'FileName_pos'}{:}; %added {:} to deal with table output
