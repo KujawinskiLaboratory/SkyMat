@@ -51,7 +51,7 @@ units = 'ng'; %set unit for standard curve (e.g., ng or pg)
 
 %% Save temporary file before merging data 
 
-save('temp');
+save('temp_C13');
 
 %% MERGING DATA FROM TWO MODES
 clear fName fileBase today
