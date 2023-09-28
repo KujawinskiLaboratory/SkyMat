@@ -49,6 +49,10 @@ units = 'ng'; %set unit for standard curve (e.g., ng or pg)
 [neg_C13.sNames, neg_C13.kgd] = considerSkyline(dfile_neg, sampleInfoFile,...
  'neg','heavyC13',2, units, oFolder);
 
+%% Save temporary file before merging data 
+
+save('temp');
+
 %% MERGING DATA FROM TWO MODES
 clear fName fileBase today
 
@@ -83,7 +87,7 @@ s = contains(tInfo_C13.Sample_Name,'pool') & contains(tInfo_C13.Sample_Name,'pos
 ks = find(s==1);
 for a = 1:length(ks)
     t = tInfo_C13.Sample_Name(ks(a));
-    tInfo_C13.Sample_Name(ks(a)) = strcat('pool',num2str(a,'%02.f'),t); %YZ 03.31.2023 added '%02.f'
+    tInfo_C13.Sample_Name(ks(a)) = strcat('pool',num2str(a,'%02.f'),'_',t); %YZ 03.31.2023 added '%02.f'
     clear t
 end
 clear a ks a
@@ -92,7 +96,7 @@ s = contains(tInfo_C13.Sample_Name,'pool') & contains(tInfo_C13.Sample_Name,'neg
 ks = find(s==1);
 for a = 1:length(ks)
     t = tInfo_C13.Sample_Name(ks(a));
-    tInfo_C13.Sample_Name(ks(a)) = strcat('pool',num2str(a,'%02.f'),t); %YZ 03.31.2023 added '%02.f'
+    tInfo_C13.Sample_Name(ks(a)) = strcat('pool',num2str(a,'%02.f'),'_',t); %YZ 03.31.2023 added '%02.f'
     clear t
 end
 clear a ks a
@@ -122,11 +126,11 @@ nrow = size(tInfo_C13,1);
 tInfo_C13.type = repmat({''},nrow,1);
 tInfo_C13.cName = repmat({''},nrow,1);
 % examples of additional columns used in the BIOS-SCOPE project
-% tInfo.cruise = repmat({''},nrow,1);
-% tInfo.cast = zeros(nrow,1);
-% tInfo.niskin = zeros(nrow,1);
-% tInfo.depth = zeros(nrow,1);
-% tInfo.addedInfo = repmat({'none'},nrow,1);
+% tInfo_C13.cruise = repmat({''},nrow,1);
+% tInfo_C13.cast = zeros(nrow,1);
+% tInfo_C13.niskin = zeros(nrow,1);
+% tInfo_C13.depth = zeros(nrow,1);
+% tInfo_C13.addedInfo = repmat({'none'},nrow,1);
 
 for a = 1:nrow
     if strcmp(tInfo_C13.Sample_Type{a},'Unknown') %only do unknowns      
@@ -138,7 +142,7 @@ for a = 1:nrow
                 %put the number of this pooled sample into 'addedInfo'
                 r_nL = regexp(one,'p'); %lower case
                 r_nU = regexp(one,'C'); %upper case
-                %tInfo.addedInfo(a) = {one(r_nL+1 : r_nU-1)};
+                %tInfo_C13.addedInfo(a) = {one(r_nL+1 : r_nU-1)};
                 tInfo_C13.addedInfo(a) = {'pooled'};
                 tInfo_C13.cName(a) = {one(1:r_nU-1)};
             else
@@ -206,15 +210,15 @@ for a = 1:size(sInfo_C13,1)
     end
     
     for aa = 1:2
-        %propagate sInfo with the cast/depth/etc. information, only do once
+        %propagate sInfo_C13 with the cast/depth/etc. information, only do once
 %         if aa == 1
-%             sInfo.type(a) = tInfo.type(ks(aa));
-%             sInfo.cName(a) = tInfo.cName(ks(aa));
-%             sInfo.cruise(a) = tInfo.cruise(ks(aa));
-%             sInfo.cast(a) = tInfo.cast(ks(aa));
-%             sInfo.niskin(a) = tInfo.niskin(ks(aa));
-%             sInfo.depth(a) = tInfo.depth(ks(aa));
-%             sInfo.addedInfo(a) = tInfo.addedInfo(ks(aa));
+%             sInfo_C13.type(a) = tInfo_C13.type(ks(aa));
+%             sInfo_C13.cName(a) = tInfo_C13.cName(ks(aa));
+%             sInfo_C13.cruise(a) = tInfo_C13.cruise(ks(aa));
+%             sInfo_C13.cast(a) = tInfo_C13.cast(ks(aa));
+%             sInfo_C13.niskin(a) = tInfo_C13.niskin(ks(aa));
+%             sInfo_C13.depth(a) = tInfo_C13.depth(ks(aa));
+%             sInfo_C13.addedInfo(a) = tInfo_C13.addedInfo(ks(aa));
 %         end
         % Two cases, because depending on the ionMode, we're shifting data
         % from a different struct into the data matrices.
