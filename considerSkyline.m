@@ -96,7 +96,7 @@ end
 % have what we need. 
 pruneData = 1; % Generally should always be 1.
 if pruneData
-    badNames = info.File_Name(info.goodData ==0) + ".raw";
+    badNames = info.FileName(info.goodData ==0) + ".raw";
     info(info.goodData==0, :) = [];
     for k = 1:length(badNames)
         data(strcmp(badNames(k),data.FileName), :) = [];
@@ -116,10 +116,10 @@ switch ionMode
 end
 
 % Set up indices and names to point to the standards and samples.
-standardNames = info.File_Name(kStandard);
+standardNames = info.FileName(kStandard);
 nStandards = sum(kStandard);
-kSample = strcmp('Unknown',info.Sample_Type);
-sampleNames = info.File_Name(kSample);
+kSample = strcmp('Unknown',info.SampleType);
+sampleNames = info.FileName(kSample);
 nSamples =sum(kSample);
 clear kStandard kSample
 
@@ -176,7 +176,7 @@ for a = 1:length(compoundList.names)
         
         % Match record numbers and unite the sample type column without
         % merging the two datasets.
-        [~, ia, ib] =intersect(smallDS.FileName,[info.File_Name+".raw"]);
+        [~, ia, ib] =intersect(smallDS.FileName,[info.FileName+".raw"]);
         smallDS.sType(ia,1) = info.sType(ib,1);
         clear c ia ib  
         
@@ -237,7 +237,7 @@ for a = 1:length(compoundList.names)
         
         su = strcmp(info.sType,'rep');
         ksu = find(su==1);
-        [c, ~, ib] = intersect([info.File_Name(ksu)+".raw"],smallDS.FileName);
+        [c, ~, ib] = intersect([info.FileName(ksu)+".raw"],smallDS.FileName);
         % This is probably redundant but checks to see if the export was 
         % blank. "unknownsOnly" omits pools.
         if ~isempty(c)

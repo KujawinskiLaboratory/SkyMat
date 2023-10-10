@@ -83,27 +83,27 @@ clear k
 % First, go through and iterate through the pooled samples
 % to provide numbers for these (otherwise will have duplicate
 % names). Need to do separately for both modes.
-s = contains(tInfo_D5.Sample_Name,'pool') & contains(tInfo_D5.Sample_Name,'pos');
+s = contains(tInfo_D5.SampleName,'pool') & contains(tInfo_D5.SampleName,'pos');
 ks = find(s==1);
 for a = 1:length(ks)
-    t = tInfo_D5.Sample_Name(ks(a));
-    tInfo_D5.Sample_Name(ks(a)) = strcat('pool',num2str(a,'%02.f'),'_',t); %YZ 03.31.2023 added '%02.f'
+    t = tInfo_D5.SampleName(ks(a));
+    tInfo_D5.SampleName(ks(a)) = strcat('pool',num2str(a,'%02.f'),'_',t); %YZ 03.31.2023 added '%02.f'
     clear t
 end
 clear a ks a
 
-s = contains(tInfo_D5.Sample_Name,'pool') & contains(tInfo_D5.Sample_Name,'neg');
+s = contains(tInfo_D5.SampleName,'pool') & contains(tInfo_D5.SampleName,'neg');
 ks = find(s==1);
 for a = 1:length(ks)
-    t = tInfo_D5.Sample_Name(ks(a));
-    tInfo_D5.Sample_Name(ks(a)) = strcat('pool',num2str(a,'%02.f'),'_',t); %YZ 03.31.2023 added '%02.f'
+    t = tInfo_D5.SampleName(ks(a));
+    tInfo_D5.SampleName(ks(a)) = strcat('pool',num2str(a,'%02.f'),'_',t); %YZ 03.31.2023 added '%02.f'
     clear t
 end
 clear a ks a
 
 % Now find the Unknown...should have the same number for positive and
 % negative ion mode.
-s = strcmp(tInfo_D5.Sample_Type,'Unknown');
+s = strcmp(tInfo_D5.SampleType,'Unknown');
 sp = strcmp(tInfo_D5.ionMode,'pos');
 ksp = (find(s==1 & sp==1));
 sn = strcmp(tInfo_D5.ionMode,'neg');
@@ -133,8 +133,8 @@ tInfo_D5.cName = repmat({''},nrow,1);
 % tInfo_D5.addedInfo = repmat({'none'},nrow,1);
 
 for a = 1:nrow
-    if strcmp(tInfo_D5.Sample_Type{a},'Unknown') %only do unknowns      
-        one = tInfo_D5.Sample_Name{a};
+    if strcmp(tInfo_D5.SampleType{a},'Unknown') %only do unknowns      
+        one = tInfo_D5.SampleName{a};
         r_pooled = regexp(one,'pool');
             if r_pooled
                 %pooled sample
@@ -224,7 +224,7 @@ for a = 1:size(sInfo_D5,1)
         % from a different struct into the data matrices.
         im = tInfo_D5.ionMode{ks(aa)};
         if isequal(im,'pos')
-            tName = tInfo_D5.File_Name(ks(aa));
+            tName = tInfo_D5.FileName(ks(aa));
             sInfo_D5.FileName_pos(a,1) = tName;
 
             [c ia tIdx] =intersect(tName,pos_D5.sNames);
@@ -233,7 +233,7 @@ for a = 1:size(sInfo_D5,1)
             clear c ia tIdx tName
             
         elseif isequal(im,'neg')
-            tName = tInfo_D5.File_Name(ks(aa));
+            tName = tInfo_D5.FileName(ks(aa));
             sInfo_D5.FileName_neg(a,1) = tName;
 
             [c ia tIdx] =intersect(tName,neg_D5.sNames);
