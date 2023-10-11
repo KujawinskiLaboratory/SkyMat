@@ -353,9 +353,16 @@ clear diaryFilename
                 compoundList.SDslope(a) = dataOut.SDslope;
                 compoundList.SDintercept(a) = dataOut.SDintercept;
                 compoundList.r2_line(a) = dataOut.r2;
+                compoundList.Sxx(a) = dataOut.Sxx;
+                compoundList.Syy(a) = dataOut.Syy;
+                compoundList.Sxy(a) = dataOut.Sxy;
+                compoundList.Sy(a) = dataOut.Sy;
                 compoundList.LOD(a) = 3.3*(dataOut.SDintercept./dataOut.slope);
                 compoundList.LOQ(a) = 10*(dataOut.SDintercept./dataOut.slope);
-
+                compoundList.A(a) = dataOut.A;
+                compoundList.B(a) = dataOut.B;
+                compoundList.C(a) = dataOut.C;
+                compoundList.xM(a) = dataOut.xM;
 
                 if 1 % You can turn off the plotting if you like.
                     % This plots the standard curve. Ironically, it refits it
@@ -387,8 +394,16 @@ clear diaryFilename
                 compoundList.SDslope(a) = NaN;
                 compoundList.SDintercept(a) = NaN;
                 compoundList.r2_line(a) = NaN;
+                compoundList.Sxx(a) = NaN;
+                compoundList.Syy(a) = NaN;
+                compoundList.Sxy(a) = NaN;
+                compoundList.Sy(a) = NaN;
                 compoundList.LOD(a) = NaN;
                 compoundList.LOQ(a) = NaN;
+                compoundList.A(a) = NaN;
+                compoundList.B(a) = NaN;
+                compoundList.C(a) = NaN;
+                compoundList.xM(a) = NaN;
 
             end
             
@@ -401,9 +416,17 @@ clear diaryFilename
             compoundList.SDslope(a) = NaN;
             compoundList.SDintercept(a) = NaN;
             compoundList.r2_line(a) = NaN;
+            compoundList.Sxx(a) = NaN;
+            compoundList.Syy(a) = NaN;
+            compoundList.Sxy(a) = NaN;
+            compoundList.Sy(a) = NaN;
             compoundList.LOD(a) = NaN;
             compoundList.LOQ(a) = NaN;
-
+            compoundList.LOD(a) = NaN;
+            compoundList.A(a) = NaN;
+            compoundList.B(a) = NaN;
+            compoundList.C(a) = NaN;
+            compoundList.xM(a) = NaN;
 
         end
         clear dataOut calcError calcConc tData
@@ -552,7 +575,22 @@ end
         dataOut.SDintercept = SDintercept;
         dataOut.PercentInterceptError = SDintercept./Intercept;
         dataOut.r2 = r2;
+        dataOut.Sxx = Sxx;
+        dataOut.Syy = Syy;
+        dataOut.Sxy = Sxy;
+        dataOut.Sy = Sy;
         
+        % Now to calculate prediction intervals at 95% confidence.
+        A = (1-r2)*((NumPoints-1)/(NumPoints-2))*(1/Sxx);
+        B = tinv(0.975,NumPoints-2)*Sy;
+        C = Sxx*(1+(1/NumPoints));
+        xM = mean(xdata);
+        dataOut.A = A;
+        dataOut.B = B;
+        dataOut.C = C;
+        dataOut.xM = xM;
+        % I'm exporting the four variables I need for later use. 
+
     end %end of getErrors as a function
 
 
