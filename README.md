@@ -15,7 +15,7 @@ We will use a number of columns that are exported from a Thermo sequence file `.
 * ionMode: "pos" or "neg"
 * sType: "blank", "rep" (samples), "std" (standard curve), "pool" (pooled QC samples)
 * _Optional_ sample data: could be species, or incubation time, or depth in the water column, or some experimental identifier.
-    *Since this sequence file can be reloaded downstream, it can be used as a sort of master table for sample information that you draw from later. 
+...*Since this sequence file can be reloaded downstream, it can be used as a sort of master table for sample information that you draw from later. 
 
 An example of the first couple lines of a formatted sequence file might look like this (*italics* are default columns in the sequence file):
 | *Sample_Type*   | *File_Name*     | *Sample_Name*  | goodData | ionMode| sType | Nominal_Duration |
