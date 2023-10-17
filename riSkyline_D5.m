@@ -140,16 +140,17 @@ for a = 1:nrow
                 %pooled sample
                 tInfo_D5.type(a) = {'pooled'};
                 %put the number of this pooled sample into 'addedInfo'
-                r_nL = regexp(one,'p'); %lower case
-                r_nU = regexp(one,'C'); %upper case
-                %tInfo_D5.addedInfo(a) = {one(r_nL+1 : r_nU-1)};
                 tInfo_D5.addedInfo(a) = {'pooled'};
-                tInfo_D5.cName(a) = {one(1:r_nU-1)};
+                tInfo_D5.cName(a) = strcat('pool',regexp(one,'\d*','Match'));
             else
                 %actual sample
-                tInfo_D5.addedInfo(a) = {'sample'}; %redundant...
-                tInfo_D5.cName(a) = {one(1:end-4)};
+                tInfo_D5.addedInfo(a) = {'sample'}; %redundant...'
+                if contains(one, " pos")
+                tInfo_D5.cName(a) = {erase(one, " pos")};
+                elseif contains(one," neg")
+                tInfo_D5.cName(a) = {erase(one, " neg")};
                 %fprintf('here')
+                end 
             end
         clear one r_* under
     end
@@ -158,7 +159,11 @@ clear a nrow
 
 % NPG 20 Sept 2023: This used to take five lines. Not sure why. But, this
 % makes a table with the sample names as the first column. 
-sInfo_D5 = table(unique(tInfo_D5.cName), 'VariableNames','cName');
+sInfo_D5 = table(unique(tInfo_D5.cName), 'VariableNames',{'cName'});
+
+if isequal(sInfo_D5.cName(1),{''})
+    sInfo_D5(1,:) = [];
+end
 
 % Preallocate double-type matrix for metabolite data.
 mtabData_D5 = zeros(size(mtabNames_D5,1),size(sInfo_D5,1));
