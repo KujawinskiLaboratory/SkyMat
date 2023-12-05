@@ -1,7 +1,9 @@
 % considerSkyline V0 : This function is called by riSkyline.m and is
 % responsible for quantification of metabolites via a five-point standard
-% curve. It calculates LOD and LOQ as well. Quantification is based on a
-% ratio to heavy spike (13C6) with the exception of any metabolite with a
+% curve. It calculates LOD and LOQ as well. LOD and LOQ are calculated with
+% the smallest standard curve (with a minimum of 4 points) with its range 
+% conaining both LOD and LOQ. Quantification is based on a ratio to heavy 
+% spike (13C6) with the exception of any metabolite with a
 % '0' in its name. These were not derivatized by benzoyl chloride and
 % therefore would not have a heavy label. 
 
@@ -96,7 +98,7 @@ end
 % have what we need. 
 pruneData = 1; % Generally should always be 1.
 if pruneData
-    badNames = info.File_Name(info.goodData ==0) + ".raw";
+    badNames = info.FileName(info.goodData ==0) + ".raw";
     info(info.goodData==0, :) = [];
     for k = 1:length(badNames)
         data(strcmp(badNames(k),data.FileName), :) = [];
@@ -116,10 +118,10 @@ switch ionMode
 end
 
 % Set up indices and names to point to the standards and samples.
-standardNames = info.File_Name(kStandard);
+standardNames = info.FileName(kStandard);
 nStandards = sum(kStandard);
-kSample = strcmp('Unknown',info.Sample_Type);
-sampleNames = info.File_Name(kSample);
+kSample = strcmp('Unknown',info.SampleType);
+sampleNames = info.FileName(kSample);
 nSamples =sum(kSample);
 clear kStandard kSample
 
@@ -143,6 +145,15 @@ compoundList.LOQ = zeros(length(compoundList.names),1);
 % Require five points for calibration (set lower for now because of small
 % curves).
 nRequired = 5;
+
+% Require four points for LOD and LOQ calculation
+n_min = 4;
+
+% Set up LODs_possibilities, LOQs_possibilities, LODs_best, LOQs_best
+LODs_possibilities = nan(length(compoundList.names),nStandards - n_min +1);
+LOQs_possibilities = nan(length(compoundList.names),nStandards - n_min +1);
+LODs_best = nan(length(compoundList.names),2);
+LOQs_best = nan(length(compoundList.names),1);
 
 % This PDF will contain graphs of the standard curves as fitted, as well as
 % prediction intervals. 
@@ -176,7 +187,7 @@ for a = 1:length(compoundList.names)
         
         % Match record numbers and unite the sample type column without
         % merging the two datasets.
-        [~, ia, ib] =intersect(smallDS.FileName,[info.File_Name+".raw"]);
+        [~, ia, ib] =intersect(smallDS.FileName,[info.FileName+".raw"]);
         smallDS.sType(ia,1) = info.sType(ib,1);
         clear c ia ib  
         
@@ -226,6 +237,64 @@ for a = 1:length(compoundList.names)
         ydata = cat(1,ydata); 
         clear idxDS idxStandards 
         
+        
+        % Get all possible values for LOD and LOQ
+        for n_STD_points = n_min:length(ydata) 
+
+            ydata_test = ydata(1:n_STD_points);
+            xdata_test = xdata(1:n_STD_points);
+       
+                   
+            dataOut_test = getErrors(xdata_test,ydata_test); %errors for the standard curve
+            
+            
+            %add in a check, if the slope is negative, this is garbage
+            if dataOut_test.slope > 0
+            %calculate the LODs
+                LODs_possibilities(a,n_STD_points-(n_min-1))...
+                    = 3.3*(dataOut_test.SDintercept./dataOut_test.slope);
+                LOQs_possibilities(a,n_STD_points-(n_min-1))...
+                    = 10*(dataOut_test.SDintercept./dataOut_test.slope);
+            else
+            end
+             
+        clear dataOut_test 
+        
+        clear xdata_test ydata_test 
+        end
+
+        % Find the lowest number of STD point possible, with the selected
+        % standard curve contain both LOD and LOQ
+
+        for n = 1:width(LODs_possibilities)
+        % replace a LOD value with NaN, if the LOD is higher than the
+        % highest point of the curve
+            if LODs_possibilities(a,n) >= setStandardConcentrations(n+n_min-1)
+               LODs_possibilities(a,n) = NaN;
+            end
+
+        % replace a LOQ value with NaN, if the LOD is higher than the
+        % highest point of the curve
+       
+            if LOQs_possibilities(a,n) >= setStandardConcentrations(n+n_min-1)
+               LODs_possibilities(a,n) = NaN;
+            end
+        end
+        
+        % the best LOD and LOQ are those calculated with the smallest curve
+        % that brackets both LOD and LOQ
+        if sum(~isnan(LODs_possibilities(a,:)))~=0 
+            k_LOD = ~isnan(LODs_possibilities(a,:));
+            [~, location] = max(k_LOD, [], 'omitnan');
+            LODs_best(a,1) = LODs_possibilities(a,location);
+            LOQs_best(a,1) = LOQs_possibilities(a,location);
+
+        % The number of points in the best subset standard curve is saved
+        % in the second column of LODs_best
+
+            LODs_best(a,2) = location+n_min-1;
+        end
+
         % Remember, will also have cases where no data were found for 
         % select samples so need to setup the spacers in there.
         % "tData" is basically the data to be fed into the calibrated
@@ -237,7 +306,7 @@ for a = 1:length(compoundList.names)
         
         su = strcmp(info.sType,'rep');
         ksu = find(su==1);
-        [c, ~, ib] = intersect([info.File_Name(ksu)+".raw"],smallDS.FileName);
+        [c, ~, ib] = intersect([info.FileName(ksu)+".raw"],smallDS.FileName);
         % This is probably redundant but checks to see if the export was 
         % blank. "unknownsOnly" omits pools.
         if ~isempty(c)
@@ -246,6 +315,8 @@ for a = 1:length(compoundList.names)
             tData_unknownsOnly = NaN;
         end
         clear su ksu c ib
+
+        
         
         % We need to make the calibration curve as close to the range of
         % the data, and the first step is finding what the LHR of our max
@@ -261,7 +332,7 @@ for a = 1:length(compoundList.names)
         end
         clear tData_unknownsOnly
 
-diary on    % Record what happens here, for example if something is above 
+        diary on    % Record what happens here, for example if something is above 
             % the standard curve in one or more samples (happens more than
             % you'd think).
 
@@ -357,12 +428,16 @@ clear diaryFilename
                 compoundList.Syy(a) = dataOut.Syy;
                 compoundList.Sxy(a) = dataOut.Sxy;
                 compoundList.Sy(a) = dataOut.Sy;
-                compoundList.LOD(a) = 3.3*(dataOut.SDintercept./dataOut.slope);
-                compoundList.LOQ(a) = 10*(dataOut.SDintercept./dataOut.slope);
+                compoundList.LOD(a) = LODs_best(a,1);
+           % SmallCurveN represents the number of points in the selected
+           % subset standard curve used to calculate LOD and LOQ
+                compoundList.SmallCurveN(a) = LODs_best(a,2);
+                compoundList.LOQ(a) = LOQs_best(a,1);
                 compoundList.A(a) = dataOut.A;
                 compoundList.B(a) = dataOut.B;
                 compoundList.C(a) = dataOut.C;
                 compoundList.xM(a) = dataOut.xM;
+
 
                 if 1 % You can turn off the plotting if you like.
                     % This plots the standard curve. Ironically, it refits it
@@ -399,6 +474,7 @@ clear diaryFilename
                 compoundList.Sxy(a) = NaN;
                 compoundList.Sy(a) = NaN;
                 compoundList.LOD(a) = NaN;
+                compoundList.SmallCurveN(a) = NaN;
                 compoundList.LOQ(a) = NaN;
                 compoundList.A(a) = NaN;
                 compoundList.B(a) = NaN;
@@ -421,6 +497,7 @@ clear diaryFilename
             compoundList.Sxy(a) = NaN;
             compoundList.Sy(a) = NaN;
             compoundList.LOD(a) = NaN;
+            compoundList.SmallCurveN(a) = NaN;
             compoundList.LOQ(a) = NaN;
             compoundList.LOD(a) = NaN;
             compoundList.A(a) = NaN;
@@ -438,6 +515,10 @@ end
 end
 
 clear a compound xdata ydata smallDS
+
+clear LODs_best LOQs_best LODs_possibilities LOQs_possibilities n_min
+
+
 
 % Replace values less than the calculated LOD with NaN         
 goodData_filtered = goodData;
