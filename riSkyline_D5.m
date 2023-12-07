@@ -30,6 +30,7 @@ clear sDir
 
 %% Set directory for where SkyMat codes are - this will create an output folder for your results
 oDir = '/Volumes/whoi/dept/mcg/KujLab/Brianna/Projects/Skyline_MATLAB_codeCompilation/testing/3_isotopes_Skyline/SkyMat';
+addpath(string(oDir))
 oFolder = string([oDir filesep 'Output']);
 mkdir(oFolder);
 
