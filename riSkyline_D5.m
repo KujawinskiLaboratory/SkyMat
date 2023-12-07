@@ -142,7 +142,7 @@ for a = 1:nrow
                 tInfo_D5.type(a) = {'pooled'};
                 %put the number of this pooled sample into 'addedInfo'
                 tInfo_D5.addedInfo(a) = {'pooled'};
-                tInfo_D5.cName(a) = strcat('pool',regexp(one,'\d*','Match'));
+                tInfo_D5.cName(a) = {strcat('pool',regexp(one,'\d*','Match','once'))};
             else
                 %actual sample
                 tInfo_D5.addedInfo(a) = {'sample'}; %redundant...'
