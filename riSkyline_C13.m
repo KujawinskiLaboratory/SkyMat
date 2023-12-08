@@ -5,9 +5,6 @@
 % (peak areas from UPLC-Orbitrap data) and convert it to concentrations by
 % using a standard curve as a ratio (light/heavy).
 
-%
-% Yuting Zhu start editing the script 3/23/23
-
 clear
 
 %% Set filenames

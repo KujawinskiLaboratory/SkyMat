@@ -5,8 +5,6 @@
 % (peak areas from UPLC-Orbitrap data) and convert it to concentrations by
 % using a standard curve as a ratio (light/heavy).
 
-%
-% Yuting Zhu start editing the script 3/23/23
 
 clear
 
@@ -81,6 +79,17 @@ k = find(tInfo_D5.goodData==0);
 tInfo_D5(k,:) = [];
 clear k
 
+% Parse out the names. Use this to figure out the unique samples and setup
+% a new matrix that I can propagate with the metabolites from both positive
+% and negative ion mode. Bit of a hack, and growing worse.
+% NPG 20 Sept 2023: I think this whole section might need to be removed.
+% We're adding extra columns for parsing out sample metadata, which is
+% something I do in downstream processing or have straight-up in the sample
+% info table. It doesn't really do much good to have this "hack" present in
+% what's supposed to be the basic processing script. 
+nrow = size(tInfo_D5,1);
+tInfo_D5.cName = repmat({''},nrow,1);
+
 % First, go through and iterate through the pooled samples
 % to provide numbers for these (otherwise will have duplicate
 % names). Need to do separately for both modes.
@@ -89,6 +98,7 @@ ks = find(s==1);
 for a = 1:length(ks)
     t = tInfo_D5.SampleName(ks(a));
     tInfo_D5.SampleName(ks(a)) = strcat('pool',num2str(a,'%02.f'),'_',t); %YZ 03.31.2023 added '%02.f'
+    tInfo_D5.cName(ks(a)) = {strcat('pool',num2str(a,'%02.f'))};
     clear t
 end
 clear a ks a
@@ -98,6 +108,7 @@ ks = find(s==1);
 for a = 1:length(ks)
     t = tInfo_D5.SampleName(ks(a));
     tInfo_D5.SampleName(ks(a)) = strcat('pool',num2str(a,'%02.f'),'_',t); %YZ 03.31.2023 added '%02.f'
+    tInfo_D5.cName(ks(a)) = {strcat('pool',num2str(a,'%02.f'))};
     clear t
 end
 clear a ks a
@@ -115,17 +126,6 @@ if ~isequal(length(ksp),length(ksn))
 end
 clear s sp sn ksp ksn
 
-% Parse out the names. Use this to figure out the unique samples and setup
-% a new matrix that I can propagate with the metabolites from both positive
-% and negative ion mode. Bit of a hack, and growing worse.
-% NPG 20 Sept 2023: I think this whole section might need to be removed.
-% We're adding extra columns for parsing out sample metadata, which is
-% something I do in downstream processing or have straight-up in the sample
-% info table. It doesn't really do much good to have this "hack" present in
-% what's supposed to be the basic processing script. 
-nrow = size(tInfo_D5,1);
-tInfo_D5.type = repmat({''},nrow,1);
-tInfo_D5.cName = repmat({''},nrow,1);
 %examples of additional columns used in the BIOS-SCOPE project
 % tInfo_D5.cruise = repmat({''},nrow,1);
 % tInfo_D5.cast = zeros(nrow,1);
@@ -138,11 +138,9 @@ for a = 1:nrow
         one = tInfo_D5.SampleName{a};
         r_pooled = regexp(one,'pool');
             if r_pooled
-                %pooled sample
-                tInfo_D5.type(a) = {'pooled'};
-                %put the number of this pooled sample into 'addedInfo'
+                
+                %put the type of this pooled sample into 'addedInfo'
                 tInfo_D5.addedInfo(a) = {'pooled'};
-                tInfo_D5.cName(a) = {strcat('pool',regexp(one,'\d*','Match','once'))};
             else
                 %actual sample
                 tInfo_D5.addedInfo(a) = {'sample'}; %redundant...'
@@ -304,6 +302,7 @@ tDir = 'InsertHere';
 tFile = string([tDir filesep 'InsertHere']);
 
 mtabData_conc = convertMoles(tFile, mtabNames_D5, mtabData_D5, units, 25);
+mtabData_conc_filtered = convertMoles(tFile, mtabNames_D5, mtabData_D5_filtered, units, 25);
 
 save(NameOfFile)
 
