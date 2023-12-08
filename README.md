@@ -25,4 +25,4 @@ An example of the first couple lines of a formatted sequence file might look lik
 | Std Bracket   | mtab_Zoop2_BC_lumos_071423_009 | Zoop2_1_std0 neg | 1 | neg | std| |
 | Unknown       | mtab_Zoop2_BC_lumos_071423_028 | Zoop2_37_t12_Cpy_9 neg | 1 | neg | rep | 12 |
 
-Note that while the default column names might contain spaces (e.g. "Sample Type"), the SkyMat scripts strip this whitespace during processing.
+Note that while the default column names might contain spaces (e.g., "Sample Type"), the SkyMat scripts strip this whitespace during processing.
