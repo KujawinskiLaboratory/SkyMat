@@ -61,6 +61,10 @@ MWtoConvert = MW.StdMW(iNames);
 
 % convert from mass to concentration (e.g., ng to nM)
 
-mtabData_conc = ((mtabData./volume_mL).*1000)./MWtoConvert;
-
+if strcmp(units,'ng')||strcmp(units,'pg')
+    mtabData_conc = ((mtabData./volume_mL).*1000)./MWtoConvert;
+elseif strcmp(units,'ng/mL')||strcmp(units,'pg/mL')
+    mtabData_conc = (mtabData.*1000)./MWtoConvert;
+else 
+    fprintf('input unit not accepted')
 end

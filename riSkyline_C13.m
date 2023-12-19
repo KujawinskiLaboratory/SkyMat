@@ -8,25 +8,25 @@
 clear
 
 %% Set filenames
-fileBase = 'testing_Compilation_3isotopes'; % Set this, don't mess with the automatic date system.
+fileBase = 'SkyMat_testing_3isotopes'; % Set this, don't mess with the automatic date system.
 today = datestr(datetime('now'),'.yyyy.mm.dd');
 NameOfFile = string([fileBase,today,'_C13.mat']);
 
 %% Set the sequence file here.
-wDir = '/Volumes/KujLab/Brianna/Projects/Skyline_MATLAB_codeCompilation/testing/3_isotopes_Skyline/raw_file_example';
-fName = 'CMP_Yuting_Exomtab_pos_redo_022323.xlsx';
+wDir = '/Volumes/KujLab/Yuting/SkyMat_testing';
+fName = 'SkyMat_3isotopes_test_pos_and_neg.xlsx';
 sampleInfoFile = string([wDir filesep fName]);
 
 clear wDir
 
 %% Set the location and names of the quantification tables exported from Skyline
-sDir = '/Volumes/KujLab/Brianna/Projects/Skyline_MATLAB_codeCompilation/testing/3_isotopes_Skyline/Skyline';
-dfile_pos = string([sDir filesep 'Skyline_pos_test_3isotopes_QuantTable_manipulated.csv']);
-dfile_neg = string([sDir filesep 'CINAR_quant_neg.csv']); 
+sDir = '/Volumes/KujLab/Yuting/SkyMat_testing';
+dfile_pos = string([sDir filesep 'SkyMat_3isotopes_test_pos.csv']);
+dfile_neg = string([sDir filesep 'SkyMat_3isotopes_test_neg.csv']); 
 clear sDir
 
 %% Set directory for where SkyMat codes are - this will create an output folder for your results
-oDir = '/Volumes/whoi/dept/mcg/KujLab/Brianna/Projects/Skyline_MATLAB_codeCompilation/testing/3_isotopes_Skyline/SkyMat';
+oDir = '/Volumes/KujLab/Yuting/SkyMat_testing';
 addpath(string(oDir))
 oFolder = string([oDir filesep 'Output']);
 mkdir(oFolder);
@@ -37,7 +37,8 @@ clear oDir
 
 %% ConsiderSkyline processing for positive mode.
 
-units = 'ng'; %set unit for standard curve (e.g., ng or pg)
+units = 'ng'; %set unit for standard curve 
+% acceptable units are ng, pg, ng/mL, and pg/mL, note that the units are case sensitive
 
 [pos_C13.sNames, pos_C13.kgd] = considerSkyline(dfile_pos, sampleInfoFile,...
     'pos','heavyC13',2, units, oFolder);
@@ -228,7 +229,9 @@ for a = 1:size(sInfo_C13,1)
         im = tInfo_C13.ionMode{ks(aa)};
         if isequal(im,'pos')
             tName = tInfo_C13.FileName(ks(aa));
+            RunOrder = tInfo_C13.runOrder(ks(aa));
             sInfo_C13.FileName_pos(a,1) = tName;
+            sInfo_C13.runOrder_pos(a,1) = RunOrder;
 
             [c ia tIdx] =intersect(tName,pos_C13.sNames);
             mtabData_C13(idx_posNew,a) = pos_C13.kgd.goodData(idx_posOld,tIdx);
@@ -238,6 +241,8 @@ for a = 1:size(sInfo_C13,1)
         elseif isequal(im,'neg')
             tName = tInfo_C13.FileName(ks(aa));
             sInfo_C13.FileName_neg(a,1) = tName;
+            RunOrder = tInfo_C13.runOrder(ks(aa));
+            sInfo_C13.runOrder_neg(a,1) = RunOrder;
 
             [c ia tIdx] =intersect(tName,neg_C13.sNames);
             mtabData_C13(idx_negNew,a) = neg_C13.kgd.goodData(idx_negOld,tIdx);
@@ -255,30 +260,6 @@ clear a
 clear idx_*
 
 clear r s
-
-% Sort the actual datafile names into their respective ion mode columns. 
-for a = 1: size(sInfo_C13,1)
-    %do positive ion mode first
-    gc = sInfo_C13{a,'FileName_pos'}{:}; %added {:} to deal with table output
-    t = regexp(gc,'_');
-    if ~isempty(t)
-        sInfo_C13.runOrder_pos(a,1) = str2num(gc(t(end)+1:end));
-    else
-        sInfo_C13.runOrder_pos(a,1) = NaN;
-    end
-    clear gc t
-    
-    %then negative ion mode
-    gc = sInfo_C13{a,'FileName_neg'}{:}; %added {:} to deal with table output
-    t = regexp(gc,'_');
-    if ~isempty(t)
-        sInfo_C13.runOrder_neg(a,1) = str2num(gc(t(end)+1:end));
-    else
-        sInfo_C13.runOrder_neg(a,1) = NaN;
-    end
-    clear gc t
-end
-clear a
  
 clear a dfile_neg dfile_pos neg_info pos_info sampleInfoFile_neg ...
     sampleInfoFile_pos
@@ -291,9 +272,9 @@ save(NameOfFile)
 % tDir - directory where your transition list is found that includes
 % columns for isPrecursor and StdMW
 %tFile - the name of the Transition list file in .csv format.
-%mtabNames - this can be either _C13, _D5, or the _filtered version of
+%mtabNames - this can be either _C13, _C13, or the _filtered version of
 %those
-%units - should be defined earlier as 'pg' or 'ng'
+%units - acceptable units are ng, pg, ng/mL, and pg/mL, note that the units are case sensitive
 %volume in mL - for example here '25' as a numeric input
 
 tDir = 'InsertHere';
@@ -303,3 +284,5 @@ mtabData_conc = convertMoles(tFile, mtabNames_C13, mtabData_C13, units, 25);
 mtabData_conc_filtered = convertMoles(tFile, mtabNames_C13, mtabData_C13_filtered, units, 25);
 
 save(NameOfFile)
+
+

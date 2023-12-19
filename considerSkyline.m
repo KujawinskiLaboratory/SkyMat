@@ -23,7 +23,7 @@ function [sampleNames, keepGoodData] = considerSkyline(...
 %   per ionMode), so even though you specify a single isotope type in the 
 %   function call, specify '2' for this parameter if you've got both 
 %   labels in your dataset.
-% 6. units: unit of standard curve (e.g., 'ng' or 'pg') 
+% 6. units: unit of standard curve, acceptable units are ng, pg, ng/mL, and pg/mL, note that the units are case sensitive
 % 7. oFolder: Output folder location. This variable is defined in the code and will
 %   create the folder and change directory to this folder. 
 
