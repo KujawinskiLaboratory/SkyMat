@@ -283,6 +283,18 @@ tFile = string([tDir filesep 'InsertHere']);
 mtabData_conc = convertMoles(tFile, mtabNames_D5, mtabData_D5, units, 25);
 mtabData_conc_filtered = convertMoles(tFile, mtabNames_D5, mtabData_D5_filtered, units, 25);
 
+LOD_conc = convertMoles(tFile, mtabNames_D5, LOD_D5, units, 25);
+LOQ_conc = convertMoles(tFile, mtabNames_D5, LOQ_D5, units, 25);
+
 save(NameOfFile)
 
+%% Create wide-format compiled table with metabolite names,LOD, and LOQ
 
+conc_table_D5 = splitvars(table(mtabNames_D5,LOD_conc,LOQ_conc,mtabData_conc));
+conc_table_D5.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo.cName'] ;
+
+writetable(conc_table_D5, strcat(fileBase,"_",units,'_concTable_D5.csv'));
+
+save(NameOfFile)
+
+clear fileBase 
