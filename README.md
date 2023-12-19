@@ -14,6 +14,7 @@ We will use a number of columns that are exported from a Thermo sequence file `.
 * goodData: binary; SkyMat scripts will ignore sequence rows where goodData=0, such as column-conditioning injections
 * ionMode: "pos" or "neg"
 * sType: "blank", "rep" (samples), "std" (standard curve), "pool" (pooled QC samples)
+* runOrder: numerical input showcasing the order your sequence was executed in
 * _Optional_ sample data: could be species, or incubation time, or depth in the water column, or some experimental identifier.
   * Since this sequence file can be reloaded downstream, it can be used as a sort of master table for sample information that you draw from later. 
   * Note also that saving an `.xlsx` copy of your file means you can pare down the working file. Extraneous columns can be hidden or deleted if you like. 
