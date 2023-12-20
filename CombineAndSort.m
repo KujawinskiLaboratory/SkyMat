@@ -12,10 +12,19 @@
 % appended set of characters, "_D5" or "_C13" depending on which isotope
 % was used in the calibration. 
 
+% Added the line below because the riSkyline scripts pull you into whatever
+% your working data directory is. We want to actually remain there, but
+% may need to remind MATLAB where this script is without resetting your
+% working directory. 
+addpath('C:/Users/germo/Documents/MATLAB/SkyMat')
+
 clear
 clc
-load("../datasets/zoop2.2023.08.17_C13.mat")
-load("../datasets/zoop2.2023.08.18_D5.mat")
+load("SkyMat_testing_3isotopes.2023.12.19_C13.mat")
+load("SkyMat_testing_3isotopes.2023.12.19_D5.mat")
+
+outdir = ".";
+filename = "SkyMat_testing_3isotopes_OneMode.mat";
 
 %% Part 2: Curve Metrics.
 % So, I was going to arbitrarily select a range where D5 calibrates high
@@ -82,12 +91,12 @@ for ii = 1:length(mtabNames_all)
     miD5 = find(mtabNames_D5 == mtabNames_all(ii));
     if ~ismember(mtabNames_all(ii),mtabNames_both) && ismember(mtabNames_all(ii),mtabNames_C13)
         mtabData_all(ii,:) = mtabData_C13(mi13C,:);
-        LOD(ii) = LOD_ng_C13(mi13C);
-        LOQ(ii) = LOQ_ng_C13(mi13C);
+        LOD(ii) = LOD_C13(mi13C);
+        LOQ(ii) = LOQ_C13(mi13C);
     elseif ~ismember(mtabNames_all(ii),mtabNames_both) && ismember(mtabNames_all(ii),mtabNames_D5)
         mtabData_all(ii,:) = mtabData_D5(miD5,:);
-        LOD(ii) = LOD_ng_D5(miD5);
-        LOQ(ii) = LOQ_ng_D5(miD5);
+        LOD(ii) = LOD_D5(miD5);
+        LOQ(ii) = LOQ_D5(miD5);
     else
         % The case where the two must be compared
 
@@ -95,7 +104,7 @@ for ii = 1:length(mtabNames_all)
         if xmax>1e5
             xmax=1e5;
         end
-        xt = [0:1:2*round(xmax)]';
+        xt = [0:xmax/5000:max(1,round(2*xmax))]';
         if contains(mtabNames_all(ii), " pos")
             mii13C = find(string(pos_C13.kgd.names) == strrep(mtabNames_all(ii)," pos",""));
             miiD5 = find(string(pos_D5.kgd.names) == strrep(mtabNames_all(ii)," pos",""));
@@ -179,7 +188,11 @@ for ii = 1:length(mtabNames_all)
         %     x_C(goodC) = real(x_C(goodC));            
         % end
         % table of interpolated values.
-        vqC = interp1(x_C(x_C>0),PI_C(x_C>0),xt,"spline");
+        error1 = (["Not enough valid points to interpolate all conf. curves for "+mtabNames_all(ii)]);
+        try vqC = interp1(x_C(x_C>0),PI_C(x_C>0),xt,"spline");
+        catch 
+            disp(error1)
+        end
         vqD = interp1(x_D(x_D>0),PI_D(x_D>0),xt,"spline");
 
         CTI = table(xt,vqC,vqD);
@@ -188,12 +201,12 @@ for ii = 1:length(mtabNames_all)
         check1 = (vqC<vqD); % "is the 13C curve better? for which points?"
         if sum(check1)==size(CTI,1) % If all points are better with 13C
             mtabData_all(ii,:) = mtabData_C13(mi13C,:);
-            LOD(ii) = LOD_ng_C13(mi13C);
-            LOQ(ii) = LOQ_ng_C13(mi13C);
+            LOD(ii) = LOD_C13(mi13C);
+            LOQ(ii) = LOQ_C13(mi13C);
         elseif sum(check1)==0 % If all points are better with D5
             mtabData_all(ii,:) = mtabData_D5(miD5,:);
-            LOD(ii) = LOD_ng_D5(miD5);
-            LOQ(ii) = LOQ_ng_D5(miD5);
+            LOD(ii) = LOD_D5(miD5);
+            LOQ(ii) = LOQ_D5(miD5);
         elseif check1(1) == 1 % if the above are false but 13C starts out better
             kb = find(check1==0);
             xcrit = xt(kb(1));
@@ -209,8 +222,8 @@ for ii = 1:length(mtabNames_all)
             end
             mtabData_all(ii,kc) = mtabData_C13(mi13C,kc);
             mtabData_all(ii,~kc) = mtabData_D5(miD5,~kc);
-            LOD(ii) = LOD_ng_C13(mi13C);
-            LOQ(ii) = LOQ_ng_C13(mi13C);
+            LOD(ii) = LOD_C13(mi13C);
+            LOQ(ii) = LOQ_C13(mi13C);
 
         else % If D5 starts out better and gets worse
             kb = find(check1==1);
@@ -227,8 +240,8 @@ for ii = 1:length(mtabNames_all)
             end
             mtabData_all(ii,kd) = mtabData_C13(mi13C,kd);
             mtabData_all(ii,~kd) = mtabData_D5(miD5,~kd);
-            LOD(ii) = LOD_ng_D5(miD5);
-            LOQ(ii) = LOQ_ng_D5(miD5);
+            LOD(ii) = LOD_D5(miD5);
+            LOQ(ii) = LOQ_D5(miD5);
 
         end
 
@@ -238,6 +251,9 @@ for ii = 1:length(mtabNames_all)
         PI95(ii,Lia) = minInt(Locb(Locb>0))';
 
         if 0
+            % Nobody is obligated to use this, but if you want to view the
+            % results of which intervals are better for what
+            % concentrations, this will plot all of them. 
             waitbar((ii+0.5)/length(mtabNames_all),w, "plotting");
             set(groot,'defaultFigureVisible','off')
             figure
@@ -245,13 +261,13 @@ for ii = 1:length(mtabNames_all)
             hold on
             plot(xt, real(vqD), "LineWidth",2,"Color","b")
             title(mtabNames_all(ii))
-            xlabel('Metabolite Concentration (pg/mL)')
-            ylabel('Calibration Prediction Interval (pg/mL)')
+            xlabel(["Metabolite Concentration "+units])
+            ylabel(["Calibration Prediction Interval "+units])
             xline(LOD(ii),'--k','LOD','DisplayName','LOD',"HandleVisibility","off")
             xline(LOQ(ii),':k','LOQ','DisplayName','LOQ',"HandleVisibility","off")
             xline(mtabData_all(ii,:), "-g")
             legend({"^{13}C Curve", "D_5 Curve", "samples"})
-            exportgraphics(gca, "PredictionIntervals.pdf", 'Append',  true)
+            exportgraphics(gca, "C:/Users/germo/Desktop/PredictionIntervals.pdf", 'Append',  true)
             hold off
             close(gcf)
             set(groot,'defaultFigureVisible','on')
@@ -324,7 +340,7 @@ var = var_OneMode;
 
 
 
-save("../datasets/zoopee_OneMode.mat","var", "mtabData", "tInfo", "sInfo","mtabNames", "LOQ", "LOD" )
+save([outdir + filesep + filename],"var", "mtabData", "tInfo", "sInfo","mtabNames", "LOQ", "LOD", "units" )
 
 clear
 

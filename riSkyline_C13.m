@@ -6,6 +6,7 @@
 % using a standard curve as a ratio (light/heavy).
 
 clear
+addpath('C:/Users/germo/Documents/MATLAB/SkyMat')
 
 %% Set filenames
 fileBase = 'SkyMat_testing_3isotopes'; % Set this, don't mess with the automatic date system.
@@ -13,20 +14,20 @@ today = datestr(datetime('now'),'.yyyy.mm.dd');
 NameOfFile = string([fileBase,today,'_C13.mat']);
 
 %% Set the sequence file here.
-wDir = '/Volumes/KujLab/Yuting/SkyMat_testing';
+wDir = 'K:\Yuting\SkyMat_testing';
 fName = 'SkyMat_3isotopes_test_pos_and_neg.xlsx';
 sampleInfoFile = string([wDir filesep fName]);
 
 clear wDir
 
 %% Set the location and names of the quantification tables exported from Skyline
-sDir = '/Volumes/KujLab/Yuting/SkyMat_testing';
+sDir = 'K:\Yuting\SkyMat_testing';
 dfile_pos = string([sDir filesep 'SkyMat_3isotopes_test_pos.csv']);
 dfile_neg = string([sDir filesep 'SkyMat_3isotopes_test_neg.csv']); 
 clear sDir
 
 %% Set directory for where SkyMat codes are - this will create an output folder for your results
-oDir = '/Volumes/KujLab/Yuting/SkyMat_testing';
+oDir = 'K:\Yuting\SkyMat_testing\NoahTest';
 addpath(string(oDir))
 oFolder = string([oDir filesep 'Output']);
 mkdir(oFolder);
@@ -277,8 +278,8 @@ save(NameOfFile)
 %units - acceptable units are ng, pg, ng/mL, and pg/mL, note that the units are case sensitive
 %volume in mL - for example here '25' as a numeric input
 
-tDir = 'InsertHere';
-tFile = string([tDir filesep 'InsertHere']);
+tDir = 'K:\_LabLogistics\Code_LumosBC_dataProcessing';
+tFile = string([tDir filesep 'Transitions_SkyLine_bothModes.2023.12.08.xlsx']);
 
 mtabData_conc = convertMoles(tFile, mtabNames_C13, mtabData_C13, units, 25);
 mtabData_conc_filtered = convertMoles(tFile, mtabNames_C13, mtabData_C13_filtered, units, 25);
@@ -291,7 +292,7 @@ save(NameOfFile)
 %% Create wide-format compiled table with metabolite names,LOD, and LOQ
 
 conc_table_C13 = splitvars(table(mtabNames_C13,LOD_conc,LOQ_conc,mtabData_conc));
-conc_table_C13.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo.cName'] ;
+conc_table_C13.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_C13.cName'] ;
 
 writetable(conc_table_C13, strcat(fileBase,"_",units,'_concTable_C13.csv'));
 
