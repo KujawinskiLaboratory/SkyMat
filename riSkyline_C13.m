@@ -232,7 +232,7 @@ for a = 1:size(sInfo_C13,1)
             tName = tInfo_C13.FileName(ks(aa));
             RunOrder = tInfo_C13.runOrder(ks(aa));
             sInfo_C13.FileName_pos(a,1) = tName;
-            sInfo_C13.runOrder_pos(a,1) = RunOrder;
+            sInfo_C13.runOrder_pos(a,1) = str2num(string(RunOrder));
 
             [c ia tIdx] =intersect(tName,pos_C13.sNames);
             mtabData_C13(idx_posNew,a) = pos_C13.kgd.goodData(idx_posOld,tIdx);
@@ -243,7 +243,7 @@ for a = 1:size(sInfo_C13,1)
             tName = tInfo_C13.FileName(ks(aa));
             sInfo_C13.FileName_neg(a,1) = tName;
             RunOrder = tInfo_C13.runOrder(ks(aa));
-            sInfo_C13.runOrder_neg(a,1) = RunOrder;
+            sInfo_C13.runOrder_neg(a,1) = str2num(string(RunOrder));
 
             [c ia tIdx] =intersect(tName,neg_C13.sNames);
             mtabData_C13(idx_negNew,a) = neg_C13.kgd.goodData(idx_negOld,tIdx);
@@ -252,7 +252,7 @@ for a = 1:size(sInfo_C13,1)
         else 
             error('Something wrong')
         end
-        clear im
+        clear im RunOrder
     end
     clear aa s ks        
 end
@@ -295,6 +295,8 @@ conc_table_C13 = splitvars(table(mtabNames_C13,LOD_conc,LOQ_conc,mtabData_conc))
 conc_table_C13.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_C13.cName'] ;
 
 writetable(conc_table_C13, strcat(fileBase,"_",units,'_concTable_C13.csv'));
+
+units = strrep(units,'/','_per_');
 
 save(NameOfFile)
 

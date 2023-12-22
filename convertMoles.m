@@ -66,5 +66,5 @@ if strcmp(units,'ng')||strcmp(units,'pg')
 elseif strcmp(units,'ng/mL')||strcmp(units,'pg/mL')
     mtabData_conc = (mtabData.*1000)./MWtoConvert;
 else 
-    fprintf('input unit not accepted')
+    error('input unit not accepted')
 end

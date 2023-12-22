@@ -232,7 +232,7 @@ for a = 1:size(sInfo_D5,1)
             tName = tInfo_D5.FileName(ks(aa));
             RunOrder = tInfo_D5.runOrder(ks(aa));
             sInfo_D5.FileName_pos(a,1) = tName;
-            sInfo_D5.runOrder_pos(a,1) = RunOrder;
+            sInfo_D5.runOrder_pos(a,1) = str2num(string(RunOrder));
 
             [c ia tIdx] =intersect(tName,pos_D5.sNames);
             mtabData_D5(idx_posNew,a) = pos_D5.kgd.goodData(idx_posOld,tIdx);
@@ -243,7 +243,7 @@ for a = 1:size(sInfo_D5,1)
             tName = tInfo_D5.FileName(ks(aa));
             sInfo_D5.FileName_neg(a,1) = tName;
             RunOrder = tInfo_D5.runOrder(ks(aa));
-            sInfo_D5.runOrder_neg(a,1) = RunOrder;
+            sInfo_D5.runOrder_neg(a,1) = str2num(string(RunOrder));
 
             [c ia tIdx] =intersect(tName,neg_D5.sNames);
             mtabData_D5(idx_negNew,a) = neg_D5.kgd.goodData(idx_negOld,tIdx);
@@ -252,7 +252,7 @@ for a = 1:size(sInfo_D5,1)
         else 
             error('Something wrong')
         end
-        clear im
+        clear im RunOrder
     end
     clear aa s ks        
 end
