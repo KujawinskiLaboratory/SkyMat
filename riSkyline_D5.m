@@ -291,11 +291,29 @@ save(NameOfFile)
 
 %% Create wide-format compiled table with metabolite names,LOD, and LOQ
 
+%update units variable to make compatible for saving to csvfile
+units = strrep(units,'/','_per_');
+
+%determine concentration units based on unit input
+if strcmp(units,"ng") || strcmp(units,"ng_per_mL") 
+     conc_units = "nM"; 
+elseif strcmp(units,"pg") || strcmp(units,"pg_per_mL") 
+        conc_units = "pM";
+end 
+
+% Save the unfiltered dataset converted to concentration
 conc_table_D5 = splitvars(table(mtabNames_D5,LOD_conc,LOQ_conc,mtabData_conc));
 conc_table_D5.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_D5.cName'] ;
 
-writetable(conc_table_D5, strcat(fileBase,"_",units,'_concTable_D5.csv'));
+writetable(conc_table_D5, strcat(fileBase,"_",conc_units,'_concTable_D5.csv'));
 
+%Save the dataset with values < LOD filtered out and converted to concentration
+conc_table_D5_filtered = splitvars(table(mtabNames_D5,LOD_conc,LOQ_conc,mtabData_conc_filtered));
+conc_table_D5_filtered.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_D5.cName'] ;
+
+writetable(conc_table_D5_filtered, strcat(fileBase,"_",conc_units,'_concTable_D5_filtered.csv'));
+
+%Save updated MATLAB file
 save(NameOfFile)
 
 clear fileBase 
