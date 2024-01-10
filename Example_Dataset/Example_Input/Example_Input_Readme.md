@@ -1,4 +1,4 @@
-#Example Input File Read Me
+# Example Input File Read Me
 
 ## Input Files: 
 1. SkyMat_3isotopes_test_neg.csv
