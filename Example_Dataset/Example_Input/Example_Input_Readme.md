@@ -22,7 +22,7 @@
       * Unknown - study samples
       * Standard - samples to use for your standard curve calculations
            * note: replicate standard points are not currently supported for standard curves calculations in SkyMat and likely will result in erroneous results and/or complex numbers. 
-  * Isotope Label Type - light,heavyD5,heavyC13
+  * Isotope Label Type - light, heavyD5, heavyC13
   * Fragment Ion Type - custom (fragment), precursor
   * Transition Note - light/heavy
   * Analyte Concentration - concentration of standards (only standard curve samples should be given an analyte concentration, all others should be left blank)
