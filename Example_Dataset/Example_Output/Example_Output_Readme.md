@@ -24,10 +24,12 @@ This document describes the expected output files for the full SkyMat code and i
 # Each file found in subfolders C13 and D5 can be broken down into the following output type 
 * SkyMat_testing_3isotopes.2024.01.10_${SILISType}.mat - Output of MATLAB workspace variables at the end of the code.
   * ${SILISType} - `C13` or `D5`
-* SkyMat_testing_3isotopes_${OutputConcentration}_concTable_${SILISType}_${FilteringUsed}.csv - Concentration table with metabolite name, LOD, LOQ, and metabolite concentrations for each sample. The `filtered` dataset replaces any value less than the LOD with NaN. Should you prefer to do your own filtering the raw unfiletered version is also provided. 
+* SkyMat_testing_3isotopes_${OutputConcentration}_concTable_${SILISType}_${FilteringUsed}.csv - Concentration table in wide-format. Columns include: metabolite name, LOD, LOQ, and sample names. Rows are the corresponding metabolite concentrations (in nM or pM - depending on input concentration) for each metabolite/sample. The `filtered` dataset replaces any value less than the calculated LOD with NaN. Should you prefer to do your own filtering the raw unfiletered version is also provided. 
   * ${OutputConcentration} - `nM` (if input concentration was ng/mL or ng) or `pM` (if input concentration was pg/mL or pg).
   * ${SILISType} - `C13` or `D5`
   * ${FilteringUsed} - unfiltered (filename ends after SILISType) or `filtered` where values less than the LOD are replaced with `NAN`
+  * Note: LODs are calculated using the following guidelines in: [ICH HARMONISED TRIPARTITE GUIDELINE. International conference on harmonisation 270 of technical requirements for registration of pharmaceuticals for human use.]([https://link-url-here.org](https://database.ich.org/sites/default/files/Q2%28R1%29%20Guideline.pdf). 
+
 * ${polarity}_heavy${SILISType}_considerSkyline_flags.txt - Flags generated due to sample concentrations exceeding the standard curve or missing confirm ions (listed with the percentage missing). 
   * ${polarity} - `pos` or `neg`
   * ${SILISType} - `C13` or `D5`
