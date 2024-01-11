@@ -34,7 +34,7 @@ This document describes the expected output files for the full SkyMat code and i
 * ${polarity}_heavy${SILISType}_mtabs_stdCurves.pdf - Plot of a standard curve for each metabolite with R2 value of the linear regression displayed, standard concentrations shown as blue `x` and individual datapoints as black circles. The calculated LOD and LOQ are shown in green and blue dashed lines, respectively.
   * ${polarity} - `pos` or `neg`
   * ${SILISType} - `C13` or `D5`
-  * <img src="images/stdCurve.jpg" width="400">
+  * <img src="images/stdCurve.JPG" width="400">
 * temp_${SILISType}.mat - temporary .mat file that saves prior to `MERGING DATA FROM TWO MODES` section, this can be used if errors occur during the data merging stage to recover your variables pre-merging without needing to re-run the script in its entirety. 
   * ${SILISType} - `C13` or `D5`
 
