@@ -36,7 +36,7 @@ This document describes the expected output files for the full SkyMat code and i
   * ${SILISType} - `C13` or `D5`
  <img src="images/stdCurve.JPG" width="800">
  
- * temp_${SILISType}.mat - temporary .mat file that saves prior to `MERGING DATA FROM TWO MODES` section, this can be used if errors occur during the data merging stage to recover your variables pre-merging without needing to re-run the script in its entirety. 
+ * temp_${SILISType}.mat - temporary .mat file that saves prior to `MERGING DATA FROM TWO MODES` section, this can be used if errors occur during the data merging stage to recover your variables pre-merging without needing to re-run the script in its entirety.
   * ${SILISType} - `C13` or `D5`
 
 ## CombineAndSort
