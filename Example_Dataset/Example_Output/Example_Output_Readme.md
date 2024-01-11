@@ -40,6 +40,7 @@ This document describes the expected output files for the full SkyMat code and i
 
 ## CombineAndSort
 * PredictionIntervals.pdf
-  * PDF showing XXX. 
+  * PDF showing XXX.
+ <img src="images/predictionInt.JPG" width="800>
 * SkyMat_testing_3isotopes_OneMode.mat
   * Output of MATLAB workspace variables at the end of the code.
