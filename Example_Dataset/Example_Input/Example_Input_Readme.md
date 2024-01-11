@@ -2,14 +2,14 @@
 
 ## Input Files: 
 1. SkyMat_3isotopes_test_neg.csv
-* Quantification table containing areas for light and heavy isotopes and transitions exported from Skyline for the negative polarity mode LC-MS/MS data aquisition.  
+ * Quantification table containing areas for light and heavy isotopes and transitions exported from Skyline for the negative polarity mode LC-MS/MS data aquisition.  
 2. SkyMat_3isotopes_test_pos.csv
-* Quantification table containing areas for light and heavy isotopes and transitions exported from Skyline for the positive polarity mode LC-MS/MS data aquisition.
+ * Quantification table containing areas for light and heavy isotopes and transitions exported from Skyline for the positive polarity mode LC-MS/MS data aquisition.
 3. SkyMat_3isotopes_test_pos_and_neg.csv
-* Sequence sheet exported from the LC-MS instrument with added columns: ionMode (pos/neg), goodData (0/1), sType (blank,rep,std,pool), runOrder (numeric)
-* Column headers include: Sample Type, File Name, Path, Instrument Method, Position, Inj Vol, Sample Name, ionMode, goodData, sType, runOrder
+ * Sequence sheet exported from the LC-MS instrument with added columns: ionMode (pos/neg), goodData (0/1), sType (blank,rep,std,pool), runOrder (numeric)
+ * Column headers include: Sample Type, File Name, Path, Instrument Method, Position, Inj Vol, Sample Name, ionMode, goodData, sType, runOrder
 4. TransitionList_SkyMat_Example.xlsx - Transition List 
-* Transition list containing metabolites and their precursor masses, fragments, molecular weights, etc. This file should be used in Skyline for determine your integration peak list and for SkyMat convertMoles.m function
+ * Transition list containing metabolites and their precursor masses, fragments, molecular weights, etc. This file should be used in Skyline for determine your integration peak list and for SkyMat convertMoles.m function
 
 ## Note: Skyline Quantification Tables require specific export columns in order for SkyMat to work. 
 * Required columns exported from Skyline: 
