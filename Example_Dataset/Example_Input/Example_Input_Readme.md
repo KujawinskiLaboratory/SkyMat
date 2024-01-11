@@ -42,10 +42,10 @@
 * goodData - Boolean argument where samples listed as `1` are included in downstream SkyMat analyses and those listed as `0` are excluded.
    * Example of files that should be exluded and listed as `0` incuded: column conditioning samples, samples where an injection failure occured, or a system suitability standard.  
 * sType - sample type inputs include:
-   * rep - unknown/study samples or "replicates"
-   * blank - MQ or other 'blank' samples excluding the 0 concentration sample included in the standard curve
-   * std - standard curve samples
-   * pool - pooled QCs
+   * `rep` - unknown/study samples or "replicates"
+   * `blank` - MQ or other 'blank' samples excluding the 0 concentration sample included in the standard curve
+   * `std` - standard curve samples
+   * `pool` - pooled QCs
 * runOrder - column with a numerical indicator of the order in which the samples were injected onto the LC-MS instrument
 
 ## Where to use input files: 
