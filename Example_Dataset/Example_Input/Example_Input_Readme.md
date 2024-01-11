@@ -13,7 +13,7 @@
 
 ## Skyline Quantification Tables require specific export columns in order for SkyMat to work. 
 * Required columns exported from Skyline: 
-  * Replicate Name
+  * Replicate Name - may be the same as File Name or a shortened version offered automatically or manually changed in Skyline.
   * File Name - name of file(s) imported into Skyline for peak integration.
   * Sample Type - Double Blank, Blank, Quality Control, Standard, or Unknown
   * Isotope Label Type - light,heavyD5,heavyC13
