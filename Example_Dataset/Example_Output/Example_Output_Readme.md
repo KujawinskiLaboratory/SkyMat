@@ -33,7 +33,7 @@ This document describes the expected output files for the full SkyMat code and i
 * ${polarity}_heavy${SILISType}_considerSkyline_flags.txt - Flags generated due to sample concentrations exceeding the standard curve or missing confirm ions (listed with the percentage missing). 
   * ${polarity} - `pos` or `neg`
   * ${SILISType} - `C13` or `D5`
-* ${polarity}_heavy${SILISType}_mtabs_stdCurves.pdf - Plot of a standard curve for each metabolite with R2 value of the linear regression displayed, standard concentrations shown as blue `x` and individual datapoints as black circles. The calculated LOD and LOQ are shown in green and blue dashed lines, respectively.
+* ${polarity}_heavy${SILISType}_mtabs_stdCurves.pdf - Plot of a standard curve for each metabolite with R2 value of the linear regression displayed, standard concentrations shown as blue x's `Data` and individual datapoints `Samples` as black circles. The calculated `LOD` and `LOQ` are shown in green and blue dashed lines, respectively.
   * ${polarity} - `pos` or `neg`
   * ${SILISType} - `C13` or `D5`
  <img src="images/stdCurve.JPG" width="800">
