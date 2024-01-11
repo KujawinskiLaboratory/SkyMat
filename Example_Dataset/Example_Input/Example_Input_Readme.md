@@ -30,11 +30,11 @@
   * Fwhm - full width half max of each integrated peak in Skyline
  
 ## Sequence Sheet format is important in order for SkyMat to work. Columns where value input is essential are described below:
-* `Sample Type` column should be used accordingly:
+* Sample Type column should be used accordingly:
    * Blank - any blank that you don't want in your final output table, blanks are solely used for assessing contamination and carryover in Skyline
    * Std Bracket - this should be used to denote any of your standard curve samples (including your "zero standard")
    * Unknown - any pooled QC sample, replicate samples, or blank that you want exported in your final quantification table.
-* `Sample Name` column
+* Sample Name column
    * For Skymat to conduct polarity merging sample names must be identical for both positive and negative mode, excludiing their suffix which would be ` pos` or ` neg` respectively. This syntax is looked for in SkyMat when conducting the polarity merging, if there are not equal numbers of paired samples in positive and negative mode the code will throw an error.
      * Example from `SkyMat_3isotopes_test_pos_and_neg.xlsx`: `Syn_10-30_filtrate_B1 neg` (row #20) and `Syn_10-30_filtrate_B1 pos` (row #42)
      * Note: The code will not break if pooled samples are not named in this convention, however the word "pool" must be included in the `Sample Name` for pooled samples which riSkyline_${SILISType}.m will then rename in a separate column to ensure they match downstream (Example if sample is solely labeled "pool QC" for all injections, riSkyline_${SILISType}.m will rename the first instance of "pool QC" to "pool01" in positive and negative mode, respectively and use as a pair.
