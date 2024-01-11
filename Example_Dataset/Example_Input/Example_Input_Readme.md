@@ -45,6 +45,7 @@
    * `rep` - unknown/study samples or "replicates"
    * `blank` - MQ or other 'blank' samples excluding the 0 concentration sample included in the standard curve
    * `std` - standard curve samples
+       * note: replicate points are not currently supported for standard curves calculations and likely will result in erroneous results and/or complex numbers.  
    * `pool` - pooled QCs
 * runOrder - column with a numerical indicator of the order in which the samples were injected onto the LC-MS instrument
 
