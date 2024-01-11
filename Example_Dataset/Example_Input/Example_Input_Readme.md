@@ -19,7 +19,7 @@
   * Isotope Label Type - light,heavyD5,heavyC13
   * Fragment Ion Type - custom (fragment), precursor
   * Transition Note - light/heavy
-  * Analyte Concentration - concentration of standards
+  * Analyte Concentration - concentration of standards (only standard curve samples should be given an analyte concentration, all others should be left blank)
   * Molecule List Name - name of group specific molecules are grouped into (e.g., molecules1) 
   * Molecule Name - name of molecule
   * Precursor Mz - mass:charge ratio of the precursor ion
