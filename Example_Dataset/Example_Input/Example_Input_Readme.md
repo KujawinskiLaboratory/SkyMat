@@ -31,10 +31,10 @@
 
 ## Where to use input files: 
 * Input files are used in both riSkyline_C13.m and riSkyline_D5.m depending on which isotope(s) you have. In this example, we have both isotopes so both codes will be used. 
-* riSkyline_C13: Section 2 (line 16)
+* riSkyline_${SILISType}: Section 2 (line 16)
   * fName = SkyMat_3isotopes_test_pos_and_neg.xlsx
-* riSkyline_C13: Section 3 (line 23)
-  * dfile_pos = SkyMat_3isotopes_test_pos.csv
-  *dfile_neg = SkyMat_3isotopes_test_neg.csv
-* riSkyline_C13: Section 9 (line 270)
+* riSkyline_${SILISType}: Section 3 (line 23)
+   * dfile_pos = SkyMat_3isotopes_test_pos.csv
+   * dfile_neg = SkyMat_3isotopes_test_neg.csv
+* riSkyline_${SILISType}: Section 9 (line 270)
   * tFile = string([tDir filesep 'TransitionList_SkyMat_Example.xlsx']);
