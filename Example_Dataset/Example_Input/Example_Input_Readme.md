@@ -16,6 +16,12 @@
   * Replicate Name - may be the same as File Name or a shortened version offered automatically or manually changed in Skyline.
   * File Name - name of file(s) imported into Skyline for peak integration.
   * Sample Type - Double Blank, Blank, Quality Control, Standard, or Unknown
+      * Double Blank - indicates no light and no heavy label present
+      * Blank - indicates it has the normal heavy analyte spiked in but no light analyte.
+      * Quality control - pooled QC samples can go under this category
+      * Unknown - study samples
+      * Standard - samples to use for your standard curve calculations
+           * note: replicate standard points are not currently supported for standard curves calculations in SkyMat and likely will result in erroneous results and/or complex numbers. 
   * Isotope Label Type - light,heavyD5,heavyC13
   * Fragment Ion Type - custom (fragment), precursor
   * Transition Note - light/heavy
