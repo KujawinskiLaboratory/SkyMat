@@ -28,7 +28,7 @@ This document describes the expected output files for the full SkyMat code and i
   * ${OutputConcentration} - `nM` (if input concentration was ng/mL or ng) or `pM` (if input concentration was pg/mL or pg).
   * ${SILISType} - `C13` or `D5`
   * ${FilteringUsed} - unfiltered (filename ends after SILISType) or `filtered` where values less than the LOD are replaced with `NAN`
-  * Note: LODs are calculated using the following guidelines in: [ICH HARMONISED TRIPARTITE GUIDELINE. International conference on harmonisation 270 of technical requirements for registration of pharmaceuticals for human use.]([https://link-url-here.org](https://database.ich.org/sites/default/files/Q2%28R1%29%20Guideline.pdf). 
+  * Note: LODs are calculated using the following guidelines in: [ICH HARMONISED TRIPARTITE GUIDELINE. International conference on harmonisation 270 of technical requirements for registration of pharmaceuticals for human use.](https://database.ich.org/sites/default/files/Q2%28R1%29%20Guideline.pdf). 
 
 * ${polarity}_heavy${SILISType}_considerSkyline_flags.txt - Flags generated due to sample concentrations exceeding the standard curve or missing confirm ions (listed with the percentage missing). 
   * ${polarity} - `pos` or `neg`
