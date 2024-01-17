@@ -16,14 +16,14 @@
 % your working data directory is. We want to actually remain there, but
 % may need to remind MATLAB where this script is without resetting your
 % working directory. 
-addpath('C:/Users/germo/Documents/MATLAB/SkyMat')
+addpath('F:\Noah Germolus\Documents\MATLAB\SkyMat')
 
 clear
 clc
-load("SkyMat_testing_3isotopes.2023.12.19_C13.mat")
-load("SkyMat_testing_3isotopes.2023.12.19_D5.mat")
+load("F:\Noah Germolus\Documents\MATLAB\SkyMat\Example_Dataset\Example_Output\C13\SkyMat_testing_3isotopes.2024.01.10_C13.mat")
+load("F:\Noah Germolus\Documents\MATLAB\SkyMat\Example_Dataset\Example_Output\D5\SkyMat_testing_3isotopes.2024.01.10_D5.mat")
 
-outdir = ".";
+outdir = "F:\Noah Germolus\Documents\MATLAB\SkyMat\Example_Dataset\Example_Output\CombineAndSort";
 filename = "SkyMat_testing_3isotopes_OneMode.mat";
 
 %% Part 2: Curve Metrics.
@@ -64,7 +64,7 @@ filename = "SkyMat_testing_3isotopes_OneMode.mat";
 
 % PI function for y-direction.
 predFunc = @(x,A,B,C,xhat,slope,intercept) [B.*sqrt(A).*sqrt(C + (x-xhat).^2),...
-    - B.*sqrt(A).*sqrt(C + (x-xhat).^2)];
+     B.*sqrt(A).*sqrt(C + (x-xhat).^2)];
 % Inverts the above function to find the delx interval.
 XPf = @(x,A,B,C,xhat,slope,intercept) predFunc(x,A,B,C,xhat,slope,intercept)./slope;
 % Traces the function above to the x-value where the estimate is valid
@@ -168,32 +168,14 @@ for ii = 1:length(mtabNames_all)
         % intersection. This is easier down the line (to find zeros in
         % MATLAB); however, I tried fitting a couple quadratics and it just
         % doesn't give me the accuracy I need.
-        % Method 2 it is.
-        
-        % Since for really bad curves, the calculations here can produce
-        % complex numbers, only take the good parts.  
-        % I do think I fixed this
-        % if sum(imag(PI_D))~=0 % If imaginary numbers are present
-        %     goodD = (imag(PI_D) == 0);
-        %     PI_D(~goodD)=NaN;
-        %     PI_D(goodD) = real(PI_D(goodD));
-        %     x_D(~goodD)=NaN;
-        %     x_D(goodD) = real(x_D(goodD));
-        % end
-        % if sum(imag(PI_C))~=0
-        %     goodC = (imag(PI_C) == 0);
-        %     PI_C(~goodC)=NaN;
-        %     PI_C(goodC) = real(PI_C(goodC));
-        %     x_C(~goodC)=NaN;
-        %     x_C(goodC) = real(x_C(goodC));            
-        % end
+
         % table of interpolated values.
         error1 = (["Not enough valid points to interpolate all conf. curves for "+mtabNames_all(ii)]);
-        try vqC = interp1(x_C(x_C>0),PI_C(x_C>0),xt,"spline");
+        try vqC = interp1(x_C(x_C>0),PI_C(x_C>0),xt,"nearest");
         catch 
             disp(error1)
         end
-        vqD = interp1(x_D(x_D>0),PI_D(x_D>0),xt,"spline");
+        vqD = interp1(x_D(x_D>0),PI_D(x_D>0),xt,"nearest");
 
         CTI = table(xt,vqC,vqD);
 
@@ -250,7 +232,7 @@ for ii = 1:length(mtabNames_all)
         [Lia, Locb] = ismember(mRound, xt);
         PI95(ii,Lia) = minInt(Locb(Locb>0))';
 
-        if 0
+        if 1
             % Nobody is obligated to use this, but if you want to view the
             % results of which intervals are better for what
             % concentrations, this will plot all of them. 
@@ -267,7 +249,7 @@ for ii = 1:length(mtabNames_all)
             xline(LOQ(ii),':k','LOQ','DisplayName','LOQ',"HandleVisibility","off")
             xline(mtabData_all(ii,:), "-g")
             legend({"^{13}C Curve", "D_5 Curve", "samples"})
-            exportgraphics(gca, "C:/Users/germo/Desktop/PredictionIntervals.pdf", 'Append',  true)
+            exportgraphics(gca, [outdir+ filesep+ "PredictionIntervals.pdf"], 'Append',  true)
             hold off
             close(gcf)
             set(groot,'defaultFigureVisible','on')
