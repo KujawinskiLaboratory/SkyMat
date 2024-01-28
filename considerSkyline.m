@@ -223,11 +223,27 @@ for a = 1:length(compoundList.names)
         [~, idxDS, idxStandards] = intersect(smallDS.FileName,...
             [standardNames + ".raw"]);
         clear c
+        
+        diary on    % Record what happens here, for example if something is above 
+            % the standard curve in one or more samples (happens more than
+            % you'd think).
 
         % Set standard curve analyte concentration values based on what was
         % entered in Skyline
-        setStandardConcentrations = smallDS.AnalyteConcentration;
-        setStandardConcentrations(isnan(setStandardConcentrations))=[];      
+         k = (smallDS.precursor==1 )&((smallDS.SampleType == "Standard")|...
+        (smallDS.SampleType == "Blank"));
+
+        setStandardConcentrations = smallDS(k,:).AnalyteConcentration;
+        setStandardConcentrations(isnan(setStandardConcentrations))=[];  
+        
+        clear smallDS_STD
+
+        if isempty(setStandardConcentrations)
+            disp(['There was no standards available for '...
+                compoundList.names{a}])
+        continue
+        end
+    
         xdata = setStandardConcentrations;
         ydata(1:length(xdata),1) = NaN;
         
@@ -265,34 +281,45 @@ for a = 1:length(compoundList.names)
 
         % Find the lowest number of STD point possible, with the selected
         % standard curve contain both LOD and LOQ
+        
+        LODs_possibilities_filtered = LODs_possibilities;
 
         for n = 1:width(LODs_possibilities)
         % replace a LOD value with NaN, if the LOD is higher than the
         % highest point of the curve
+        % skipped the last LOD_possibility. In a rare case, all calculated
+        % LOQ were higher than the upper bound of the curve
             if LODs_possibilities(a,n) >= setStandardConcentrations(n+n_min-1)
-               LODs_possibilities(a,n) = NaN;
+               LODs_possibilities_filtered(a,n) = NaN;
             end
 
         % replace a LOQ value with NaN, if the LOD is higher than the
         % highest point of the curve
        
             if LOQs_possibilities(a,n) >= setStandardConcentrations(n+n_min-1)
-               LODs_possibilities(a,n) = NaN;
+               LODs_possibilities_filtered(a,n) = NaN;
             end
-        end
+        end    
         
         % the best LOD and LOQ are those calculated with the smallest curve
         % that brackets both LOD and LOQ
-        if sum(~isnan(LODs_possibilities(a,:)))~=0 
-            k_LOD = ~isnan(LODs_possibilities(a,:));
+        if sum(~isnan(LODs_possibilities_filtered(a,:)))~=0 
+            k_LOD = ~isnan(LODs_possibilities_filtered(a,:));
             [~, location] = max(k_LOD, [], 'omitnan');
-            LODs_best(a,1) = LODs_possibilities(a,location);
+            LODs_best(a,1) = LODs_possibilities_filtered(a,location);
             LOQs_best(a,1) = LOQs_possibilities(a,location);
 
         % The number of points in the best subset standard curve is saved
         % in the second column of LODs_best
 
             LODs_best(a,2) = location+n_min-1;
+        else 
+            LODs_best(a,1) = LODs_possibilities_filtered(a,end);
+            LOQs_best(a,1) = LOQs_possibilities(a,end);
+            LODs_best(a,2) = width(LODs_possibilities)+n_min-1;
+            
+            disp(['All calculated LOQs were above STD upper bound for '...
+                compoundList.names{a}])
         end
 
         % Remember, will also have cases where no data were found for 
@@ -332,9 +359,6 @@ for a = 1:length(compoundList.names)
         end
         clear tData_unknownsOnly
 
-        diary on    % Record what happens here, for example if something is above 
-            % the standard curve in one or more samples (happens more than
-            % you'd think).
 
         if ~isempty(kMax)
             % Have at least one point on the curve.
@@ -516,7 +540,7 @@ end
 
 clear a compound xdata ydata smallDS
 
-clear LODs_best LOQs_best LODs_possibilities LOQs_possibilities n_min
+clear LODs_best LOQs_best LODs_possibilities LOQs_possibilities n_min LODs_possibilities_filtered
 
 
 
