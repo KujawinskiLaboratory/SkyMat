@@ -253,6 +253,24 @@ for a = 1:length(compoundList.names)
         ydata = cat(1,ydata); 
         clear idxDS idxStandards 
         
+        % Need at least three points to make a curve AND get the error 
+        % estimates. These next couple lines actually cause a lot of
+        % errors. Usually, this a result of the sequence file being
+        % formatted wrong such that xdata and ydata don't end up the same
+        % length.
+        try
+            show = [xdata ydata];
+        catch
+            fprintf('here')
+        end
+        % For whatever reason we screen NaNs out again. There probably are
+        % none by this point. 
+        i = isnan(show);
+        sfmi = sum(i,2);
+        k = find(sfmi==0);
+        xdata = xdata(k);
+        ydata = ydata(k);
+        clear show i sfmi k
         
         % Get all possible values for LOD and LOQ
         for n_STD_points = n_min:length(ydata) 
