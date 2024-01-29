@@ -271,7 +271,7 @@ save(NameOfFile)
 %(e.g., pg to pM)
 % input variables for function include:
 % tDir - directory where your transition list is found that includes
-% columns for isPrecursor and StdMW
+% columns for isParent and StdMW
 %tFile - the name of the Transition list file in .csv format.
 %mtabNames - this can be either _C13, _C13, or the _filtered version of
 %those

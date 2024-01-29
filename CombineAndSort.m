@@ -228,8 +228,8 @@ for ii = 1:length(mtabNames_all)
         end
 
         minInt = min([vqC,vqD],[],2);
-        mRound = round(mtabData_all(ii,:))';
-        [Lia, Locb] = ismember(mRound, xt);
+        mRound = round(mtabData_all(ii,:),2)';
+        [Lia, Locb] = ismember(mRound, round(xt,2));
         PI95(ii,Lia) = minInt(Locb(Locb>0))';
 
         if 1
@@ -278,15 +278,15 @@ for ii= 1:length(uniqueNames)
     ialln = find(mtabNames_all == NegName);
     if isempty(iallp)
         mtabData_OneMode(ii,:) = mtabData_all(ialln,:);
-        LOQ_OneMode = LOQ(ialln);
-        LOD_OneMode = LOD(ialln);
+        LOQ_OneMode(ii,1) = LOQ(ialln);
+        LOD_OneMode(ii,1) = LOD(ialln);
         var_OneMode(ii,:) = PI95(ialln,:);
         modeUsed(ii,:) = "-";
         continue
     elseif isempty(ialln)
         mtabData_OneMode(ii,:) = mtabData_all(iallp,:);
-        LOQ_OneMode = LOQ(iallp);
-        LOD_OneMode = LOD(iallp);
+        LOQ_OneMode(ii,1) = LOQ(iallp);
+        LOD_OneMode(ii,1) = LOD(iallp);
         var_OneMode(ii,:) = PI95(iallp,:);
         modeUsed(ii,:) = "+";
         continue
@@ -295,8 +295,8 @@ for ii= 1:length(uniqueNames)
     PosBetter = (varp<varn);
     mtabData_OneMode(ii,PosBetter) = mtabData_all(iallp,PosBetter);
     mtabData_OneMode(ii,~PosBetter) = mtabData_all(ialln, ~PosBetter);
-    LOQ_OneMode = min([LOQ(iallp),LOQ(ialln)]);
-    LOD_OneMode = min([LOD(iallp),LOD(ialln)]);
+    LOQ_OneMode(ii,1) = min([LOQ(iallp),LOQ(ialln)]);
+    LOD_OneMode(ii,1) = min([LOD(iallp),LOD(ialln)]);
     var_OneMode(ii,PosBetter) = varp(PosBetter);
     var_OneMode(ii, ~PosBetter) = varn(~PosBetter);
     modeUsed(ii,PosBetter) = "+";

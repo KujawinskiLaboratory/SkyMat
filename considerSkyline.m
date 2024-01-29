@@ -272,6 +272,12 @@ for a = 1:length(compoundList.names)
         ydata = ydata(k);
         clear show i sfmi k
         
+        if sum(~isnan(ydata)) ==0
+            disp(['There was no standards available for '...
+                compoundList.names{a}])
+            continue
+        end
+
         % Get all possible values for LOD and LOQ
         for n_STD_points = n_min:length(ydata) 
 
