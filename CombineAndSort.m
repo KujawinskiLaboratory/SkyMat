@@ -75,7 +75,7 @@ xfind = @(x,xpf_out) [x+xpf_out(:,1), x-xpf_out(:,2)];
 % both isotopes.
 mtabNames_both = intersect(mtabNames_D5, mtabNames_C13);
 mtabNames_all = union(mtabNames_D5,mtabNames_C13);
-mtabData_all = zeros(size(mtabNames_all,1),size(mtabData_C13,2));
+mtabData_all = zeros(size(mtabNames_all,1),size(mtabData_C13_conc,2));
 
 LOQ = zeros(size(mtabNames_all,1));
 LOD = zeros(size(mtabNames_all,1));
@@ -90,17 +90,17 @@ for ii = 1:length(mtabNames_all)
     mi13C = find(mtabNames_C13 == mtabNames_all(ii));
     miD5 = find(mtabNames_D5 == mtabNames_all(ii));
     if ~ismember(mtabNames_all(ii),mtabNames_both) && ismember(mtabNames_all(ii),mtabNames_C13)
-        mtabData_all(ii,:) = mtabData_C13(mi13C,:);
-        LOD(ii) = LOD_C13(mi13C);
-        LOQ(ii) = LOQ_C13(mi13C);
+        mtabData_all(ii,:) = mtabData_C13_conc(mi13C,:);
+        LOD(ii) = LOD_C13_conc(mi13C);
+        LOQ(ii) = LOQ_C13_conc(mi13C);
     elseif ~ismember(mtabNames_all(ii),mtabNames_both) && ismember(mtabNames_all(ii),mtabNames_D5)
-        mtabData_all(ii,:) = mtabData_D5(miD5,:);
-        LOD(ii) = LOD_D5(miD5);
-        LOQ(ii) = LOQ_D5(miD5);
+        mtabData_all(ii,:) = mtabData_D5_conc(miD5,:);
+        LOD(ii) = LOD_D5_conc(miD5);
+        LOQ(ii) = LOQ_D5_conc(miD5);
     else
         % The case where the two must be compared
 
-        xmax = max([mtabData_C13(mi13C,:),mtabData_D5(miD5,:)]);
+        xmax = max([mtabData_C13_conc(mi13C,:),mtabData_D5_conc(miD5,:)]);
         if xmax>1e5
             xmax=1e5;
         end
@@ -182,18 +182,18 @@ for ii = 1:length(mtabNames_all)
         % First, check if one curve is always better than the other one.
         check1 = (vqC<vqD); % "is the 13C curve better? for which points?"
         if sum(check1)==size(CTI,1) % If all points are better with 13C
-            mtabData_all(ii,:) = mtabData_C13(mi13C,:);
-            LOD(ii) = LOD_C13(mi13C);
-            LOQ(ii) = LOQ_C13(mi13C);
+            mtabData_all(ii,:) = mtabData_C13_conc(mi13C,:);
+            LOD(ii) = LOD_C13_conc(mi13C);
+            LOQ(ii) = LOQ_C13_conc(mi13C);
         elseif sum(check1)==0 % If all points are better with D5
-            mtabData_all(ii,:) = mtabData_D5(miD5,:);
-            LOD(ii) = LOD_D5(miD5);
-            LOQ(ii) = LOQ_D5(miD5);
+            mtabData_all(ii,:) = mtabData_D5_conc(miD5,:);
+            LOD(ii) = LOD_D5_conc(miD5);
+            LOQ(ii) = LOQ_D5_conc(miD5);
         elseif check1(1) == 1 % if the above are false but 13C starts out better
             kb = find(check1==0);
             xcrit = xt(kb(1));
-            kc = mtabData_C13(mi13C,:)<xcrit;
-            kd = mtabData_D5(miD5,:)<xcrit;
+            kc = mtabData_C13_conc(mi13C,:)<xcrit;
+            kd = mtabData_D5_conc(miD5,:)<xcrit;
             if kc~=kd
                 %not sure what to do here yet. There's a possibility that
                 %a sample, calibrated with both curves, could read
@@ -202,16 +202,16 @@ for ii = 1:length(mtabNames_all)
                 %accept the 13C-based critical point as law.
                 disp("calibrated values straddle a critical point")
             end
-            mtabData_all(ii,kc) = mtabData_C13(mi13C,kc);
-            mtabData_all(ii,~kc) = mtabData_D5(miD5,~kc);
-            LOD(ii) = LOD_C13(mi13C);
-            LOQ(ii) = LOQ_C13(mi13C);
+            mtabData_all(ii,kc) = mtabData_C13_conc(mi13C,kc);
+            mtabData_all(ii,~kc) = mtabData_D5_conc(miD5,~kc);
+            LOD(ii) = LOD_C13_conc(mi13C);
+            LOQ(ii) = LOQ_C13_conc(mi13C);
 
         else % If D5 starts out better and gets worse
             kb = find(check1==1);
             xcrit = xt(kb(1));
-            kc = mtabData_C13(mi13C,:)<xcrit;
-            kd = mtabData_D5(miD5,:)<xcrit;
+            kc = mtabData_C13_conc(mi13C,:)<xcrit;
+            kd = mtabData_D5_conc(miD5,:)<xcrit;
             if kc~=kd
                 %not sure what to do here yet. There's a possibility that
                 %a sample, calibrated with both curves, could read
@@ -220,10 +220,10 @@ for ii = 1:length(mtabNames_all)
                 %accept the 13C-based critical point as law.
                 disp("calibrated values straddle a critical point")
             end
-            mtabData_all(ii,kd) = mtabData_C13(mi13C,kd);
-            mtabData_all(ii,~kd) = mtabData_D5(miD5,~kd);
-            LOD(ii) = LOD_D5(miD5);
-            LOQ(ii) = LOQ_D5(miD5);
+            mtabData_all(ii,kd) = mtabData_C13_conc(mi13C,kd);
+            mtabData_all(ii,~kd) = mtabData_D5_conc(miD5,~kd);
+            LOD(ii) = LOD_D5_conc(miD5);
+            LOQ(ii) = LOQ_D5_conc(miD5);
 
         end
 
