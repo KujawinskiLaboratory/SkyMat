@@ -281,11 +281,11 @@ save(NameOfFile)
 tDir = 'K:\_LabLogistics\Code_LumosBC_dataProcessing';
 tFile = string([tDir filesep 'Transitions_SkyLine_bothModes.2023.12.08.xlsx']);
 
-mtabData_conc = convertMoles(tFile, mtabNames_C13, mtabData_C13, units, 25);
-mtabData_conc_filtered = convertMoles(tFile, mtabNames_C13, mtabData_C13_filtered, units, 25);
+mtabData_C13_conc = convertMoles(tFile, mtabNames_C13, mtabData_C13, units, 25);
+mtabData_C13_conc_filtered = convertMoles(tFile, mtabNames_C13, mtabData_C13_filtered, units, 25);
 
-LOD_conc = convertMoles(tFile, mtabNames_C13, LOD_C13, units, 25);
-LOQ_conc = convertMoles(tFile, mtabNames_C13, LOQ_C13, units, 25);
+LOD_C13_conc = convertMoles(tFile, mtabNames_C13, LOD_C13, units, 25);
+LOQ_C13_conc = convertMoles(tFile, mtabNames_C13, LOQ_C13, units, 25);
 
 save(NameOfFile)
 
@@ -302,13 +302,13 @@ elseif strcmp(units,"pg") || strcmp(units,"pg_per_mL")
 end 
 
 % Save the unfiltered dataset converted to concentration
-conc_table_C13 = splitvars(table(mtabNames_C13,LOD_conc,LOQ_conc,mtabData_conc));
+conc_table_C13 = splitvars(table(mtabNames_C13,LOD_C13_conc,LOQ_C13_conc,mtabData_C13_conc));
 conc_table_C13.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_C13.cName'] ;
 
 writetable(conc_table_C13, strcat(fileBase,"_",conc_units,'_concTable_C13.csv'));
 
 %Save the dataset with values < LOD filtered out and converted to concentration
-conc_table_C13_filtered = splitvars(table(mtabNames_C13,LOD_conc,LOQ_conc,mtabData_conc_filtered));
+conc_table_C13_filtered = splitvars(table(mtabNames_C13,LOD_C13_conc,LOQ_C13_conc,mtabData_C13_conc_filtered));
 conc_table_C13_filtered.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_C13.cName'] ;
 
 writetable(conc_table_C13_filtered, strcat(fileBase,"_",conc_units,'_concTable_C13_filtered.csv'));
