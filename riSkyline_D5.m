@@ -281,11 +281,11 @@ save(NameOfFile)
 tDir = 'K:\_LabLogistics\Code_LumosBC_dataProcessing';
 tFile = string([tDir filesep 'Transitions_SkyLine_bothModes.2023.12.08.xlsx']);
 
-mtabData_conc = convertMoles(tFile, mtabNames_D5, mtabData_D5, units, 25);
-mtabData_conc_filtered = convertMoles(tFile, mtabNames_D5, mtabData_D5_filtered, units, 25);
+mtabData_D5_conc = convertMoles(tFile, mtabNames_D5, mtabData_D5, units, 25);
+mtabData_D5_conc_filtered = convertMoles(tFile, mtabNames_D5, mtabData_D5_filtered, units, 25);
 
-LOD_conc = convertMoles(tFile, mtabNames_D5, LOD_D5, units, 25);
-LOQ_conc = convertMoles(tFile, mtabNames_D5, LOQ_D5, units, 25);
+LOD_D5_conc = convertMoles(tFile, mtabNames_D5, LOD_D5, units, 25);
+LOQ_D5_conc = convertMoles(tFile, mtabNames_D5, LOQ_D5, units, 25);
 
 save(NameOfFile)
 
@@ -302,13 +302,13 @@ elseif strcmp(units,"pg") || strcmp(units,"pg_per_mL")
 end 
 
 % Save the unfiltered dataset converted to concentration
-conc_table_D5 = splitvars(table(mtabNames_D5,LOD_conc,LOQ_conc,mtabData_conc));
+conc_table_D5 = splitvars(table(mtabNames_D5,LOD_D5_conc,LOQ_D5_conc,mtabData_D5_conc));
 conc_table_D5.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_D5.cName'] ;
 
 writetable(conc_table_D5, strcat(fileBase,"_",conc_units,'_concTable_D5.csv'));
 
 %Save the dataset with values < LOD filtered out and converted to concentration
-conc_table_D5_filtered = splitvars(table(mtabNames_D5,LOD_conc,LOQ_conc,mtabData_conc_filtered));
+conc_table_D5_filtered = splitvars(table(mtabNames_D5,LOD_D5_conc,LOQ_D5_conc,mtabData_D5_conc_filtered));
 conc_table_D5_filtered.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_D5.cName'] ;
 
 writetable(conc_table_D5_filtered, strcat(fileBase,"_",conc_units,'_concTable_D5_filtered.csv'));
