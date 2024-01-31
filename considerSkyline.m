@@ -695,3 +695,51 @@ end
         errorPercent = calcError./calcConc*100;
         
     end %end of useErrors as a function
+
+    function dataOut = getErrors_T1(x,y,ystd)
+    % Testing use of a Type 1 chi-squared minimization to account for
+    % triplicate standards.
+    NumPoints=length(x);
+    S = sum(1/(ystd.^2));
+    Sx = sum(x./(ystd.^2));
+    Sy = sum(y./(ystd.^2));
+    Sxx = sum((x./ystd).^2);
+    Syy = sum((y./ystd).^2);
+    Sxy = sum((x.*y)./(ystd.^2));
+
+    Am = [S, Sx; Sx, Sxx];
+    bm = [Sy; Sxy];
+    coef = Am\bm;
+
+    Slope = coef(2);
+    Intercept = coef(1);
+
+    SDslope = sqrt(S/(Sxx-(Sx^2)));
+    SDintercept = sqrt(Sxx/(Sxx-(Sx^2)));
+
+    r2 = 1 - ((Syy-Slope^2*Sxx) ./Syy);
+
+    %data to send out of this function (when it is a function)
+    dataOut.slope = Slope;
+    dataOut.intercept = Intercept;
+    dataOut.SDslope = SDslope;
+    dataOut.PercentSlopeError = SDslope./Slope;
+    dataOut.SDintercept = SDintercept;
+    dataOut.PercentInterceptError = SDintercept./Intercept;
+    dataOut.r2 = r2;
+    dataOut.Sxx = Sxx;
+    dataOut.Syy = Syy;
+    dataOut.Sxy = Sxy;
+    dataOut.Sy = Sy;
+
+    % Now to calculate prediction intervals at 95% confidence.
+    A = (1-r2)*((NumPoints-1)/(NumPoints-2))*(1/Sxx);
+    B = tinv(0.975,NumPoints-2)*Sy;
+    C = Sxx*(1+(1/NumPoints));
+    xM = mean(x);
+    dataOut.A = A;
+    dataOut.B = B;
+    dataOut.C = C;
+    dataOut.xM = xM;
+    % I'm exporting the four variables I need for later use.
+    end

@@ -171,11 +171,11 @@ for ii = 1:length(mtabNames_all)
 
         % table of interpolated values.
         error1 = (["Not enough valid points to interpolate all conf. curves for "+mtabNames_all(ii)]);
-        try vqC = interp1(x_C(x_C>0),PI_C(x_C>0),xt,"nearest");
+        try vqC = interp1(x_C(x_C>0),PI_C(x_C>0),xt,"linear");
         catch 
             disp(error1)
         end
-        vqD = interp1(x_D(x_D>0),PI_D(x_D>0),xt,"nearest");
+        vqD = interp1(x_D(x_D>0),PI_D(x_D>0),xt,"linear");
 
         CTI = table(xt,vqC,vqD);
 
