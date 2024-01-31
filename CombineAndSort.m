@@ -81,6 +81,7 @@ LOQ = zeros(size(mtabNames_all,1));
 LOD = zeros(size(mtabNames_all,1));
 
 PI95 = nan.*zeros(length(mtabNames_all), size(mtabData_all,2));
+isotopeUsed = string(zeros(length(uniqueNames),size(PI95,2)));
 
 w = waitbar(0,'','Name','Checking metabolites for prediction interval choice...');
 for ii = 1:length(mtabNames_all)
@@ -91,10 +92,12 @@ for ii = 1:length(mtabNames_all)
     miD5 = find(mtabNames_D5 == mtabNames_all(ii));
     if ~ismember(mtabNames_all(ii),mtabNames_both) && ismember(mtabNames_all(ii),mtabNames_C13)
         mtabData_all(ii,:) = mtabData_C13(mi13C,:);
+        isotopeUsed(ii,:) = "13C";
         LOD(ii) = LOD_C13(mi13C);
         LOQ(ii) = LOQ_C13(mi13C);
     elseif ~ismember(mtabNames_all(ii),mtabNames_both) && ismember(mtabNames_all(ii),mtabNames_D5)
         mtabData_all(ii,:) = mtabData_D5(miD5,:);
+        isotopeUsed(ii,:) = "D5";
         LOD(ii) = LOD_D5(miD5);
         LOQ(ii) = LOQ_D5(miD5);
     else
@@ -183,10 +186,12 @@ for ii = 1:length(mtabNames_all)
         check1 = (vqC<vqD); % "is the 13C curve better? for which points?"
         if sum(check1)==size(CTI,1) % If all points are better with 13C
             mtabData_all(ii,:) = mtabData_C13(mi13C,:);
+            isotopeUsed(ii,:) = "13C";
             LOD(ii) = LOD_C13(mi13C);
             LOQ(ii) = LOQ_C13(mi13C);
         elseif sum(check1)==0 % If all points are better with D5
             mtabData_all(ii,:) = mtabData_D5(miD5,:);
+            isotopeUsed(ii,:) = "D5";
             LOD(ii) = LOD_D5(miD5);
             LOQ(ii) = LOQ_D5(miD5);
         elseif check1(1) == 1 % if the above are false but 13C starts out better
@@ -204,6 +209,8 @@ for ii = 1:length(mtabNames_all)
             end
             mtabData_all(ii,kc) = mtabData_C13(mi13C,kc);
             mtabData_all(ii,~kc) = mtabData_D5(miD5,~kc);
+            isotopeUsed(ii,kc) = "13C";
+            isotopeUsed(ii,~kc) = "D5";
             LOD(ii) = LOD_C13(mi13C);
             LOQ(ii) = LOQ_C13(mi13C);
 
@@ -222,6 +229,8 @@ for ii = 1:length(mtabNames_all)
             end
             mtabData_all(ii,kd) = mtabData_C13(mi13C,kd);
             mtabData_all(ii,~kd) = mtabData_D5(miD5,~kd);
+            isotopeUsed(ii,kd) = "13C";
+            isotopeUsed(ii,~kd) = "D5";
             LOD(ii) = LOD_D5(miD5);
             LOQ(ii) = LOQ_D5(miD5);
 
@@ -322,7 +331,7 @@ var = var_OneMode;
 
 
 
-save([outdir + filesep + filename],"var", "mtabData", "tInfo", "sInfo","mtabNames", "LOQ", "LOD", "units" )
+save([outdir + filesep + filename],"var", "mtabData", "tInfo", "sInfo","mtabNames", "LOQ", "LOD", "units", "modeUsed", "isotopeUsed")
 
 clear
 
