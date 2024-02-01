@@ -84,6 +84,7 @@ mtabData_all = zeros(size(mtabNames_all,1),size(mtabData_C13_conc,2));
 
 LOQ = zeros(size(mtabNames_all,1));
 LOD = zeros(size(mtabNames_all,1));
+isotopeUsed = string(zeros(size(mtabNames_all,1),size(mtabData_all,2)));
 
 PI95 = nan.*zeros(length(mtabNames_all), size(mtabData_all,2));
 
@@ -98,10 +99,12 @@ for ii = 1:length(mtabNames_all)
         mtabData_all(ii,:) = mtabData_C13_conc(mi13C,:);
         LOD(ii) = LOD_C13_conc(mi13C);
         LOQ(ii) = LOQ_C13_conc(mi13C);
+        isotopeUsed(ii,:) = "13C";
     elseif ~ismember(mtabNames_all(ii),mtabNames_both) && ismember(mtabNames_all(ii),mtabNames_D5)
         mtabData_all(ii,:) = mtabData_D5_conc(miD5,:);
         LOD(ii) = LOD_D5_conc(miD5);
         LOQ(ii) = LOQ_D5_conc(miD5);
+        isotopeUsed(ii,:) = "D5";
     else
         % The case where the two must be compared
 
@@ -190,10 +193,12 @@ for ii = 1:length(mtabNames_all)
             mtabData_all(ii,:) = mtabData_C13_conc(mi13C,:);
             LOD(ii) = LOD_C13_conc(mi13C);
             LOQ(ii) = LOQ_C13_conc(mi13C);
+            isotopeUsed(ii,:) = "13C";
         elseif sum(check1)==0 % If all points are better with D5
             mtabData_all(ii,:) = mtabData_D5_conc(miD5,:);
             LOD(ii) = LOD_D5_conc(miD5);
             LOQ(ii) = LOQ_D5_conc(miD5);
+            isotopeUsed(ii,:) = "D5";
         elseif check1(1) == 1 % if the above are false but 13C starts out better
             kb = find(check1==0);
             xcrit = xt(kb(1));
@@ -209,6 +214,8 @@ for ii = 1:length(mtabNames_all)
             end
             mtabData_all(ii,kc) = mtabData_C13_conc(mi13C,kc);
             mtabData_all(ii,~kc) = mtabData_D5_conc(miD5,~kc);
+            isotopeUsed(ii,kc) = "13C";
+            isotopeUsed(ii,~kc) = "D5";
             LOD(ii) = LOD_C13_conc(mi13C);
             LOQ(ii) = LOQ_C13_conc(mi13C);
 
@@ -227,6 +234,8 @@ for ii = 1:length(mtabNames_all)
             end
             mtabData_all(ii,kd) = mtabData_C13_conc(mi13C,kd);
             mtabData_all(ii,~kd) = mtabData_D5_conc(miD5,~kd);
+            isotopeUsed(ii,kd) = "13C";
+            isotopeUsed(ii,~kd) = "D5";
             LOD(ii) = LOD_D5_conc(miD5);
             LOQ(ii) = LOQ_D5_conc(miD5);
 
@@ -275,6 +284,7 @@ LOQ_OneMode = zeros(length(uniqueNames),1);
 LOD_OneMode = zeros(length(uniqueNames),1);
 var_OneMode = zeros(length(uniqueNames),size(PI95,2));
 modeUsed = string(zeros(length(uniqueNames),size(PI95,2)));
+isotopeUsed_oneMode = string(zeros(length(uniqueNames),size(PI95,2)));
 
 for ii= 1:length(uniqueNames)
     PosName = uniqueNames(ii) + " pos";
@@ -287,6 +297,7 @@ for ii= 1:length(uniqueNames)
         LOD_OneMode(ii,1) = LOD(ialln);
         var_OneMode(ii,:) = PI95(ialln,:);
         modeUsed(ii,:) = "-";
+        isotopeUsed_oneMode(ii,:) = isotopeUsed(ialln,:);
         continue
     elseif isempty(ialln)
         mtabData_OneMode(ii,:) = mtabData_all(iallp,:);
@@ -294,6 +305,7 @@ for ii= 1:length(uniqueNames)
         LOD_OneMode(ii,1) = LOD(iallp);
         var_OneMode(ii,:) = PI95(iallp,:);
         modeUsed(ii,:) = "+";
+        isotopeUsed_oneMode(ii,:) = isotopeUsed(iallp,:);
         continue
     end
     varp = PI95(iallp,:); varn = PI95(ialln, :);
@@ -306,6 +318,8 @@ for ii= 1:length(uniqueNames)
     var_OneMode(ii, ~PosBetter) = varn(~PosBetter);
     modeUsed(ii,PosBetter) = "+";
     modeUsed(ii, ~PosBetter) = "-";
+    isotopeUsed_oneMode(ii,PosBetter) = isotopeUsed(iallp, PosBetter);
+    isotopeUsed_oneMode(ii,~PosBetter) = isotopeUsed(iallp, ~PosBetter);
 end
 
 
@@ -324,10 +338,11 @@ tInfo = tInfo_C13;
 LOD = LOD_OneMode;
 LOQ = LOQ_OneMode;
 var = var_OneMode;
+isotopeUsed = isotopeUsed_oneMode;
 
 
-
-save([outdir + filesep + filename],"var", "mtabData", "tInfo", "sInfo","mtabNames", "LOQ", "LOD", "conc_units" )
+save([outdir + filesep + filename],"var", "mtabData", "tInfo",...
+    "sInfo","mtabNames", "LOQ", "LOD", "conc_units", "modeUsed", "isotopeUsed")
 
 clear
 
