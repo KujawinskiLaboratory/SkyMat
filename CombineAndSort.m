@@ -16,14 +16,19 @@
 % your working data directory is. We want to actually remain there, but
 % may need to remind MATLAB where this script is without resetting your
 % working directory. 
-addpath('F:\Noah Germolus\Documents\MATLAB\SkyMat')
+addpath('.')
 
 clear
 clc
-load("F:\Noah Germolus\Documents\MATLAB\SkyMat\Example_Dataset\Example_Output\C13\SkyMat_testing_3isotopes.2024.01.10_C13.mat")
-load("F:\Noah Germolus\Documents\MATLAB\SkyMat\Example_Dataset\Example_Output\D5\SkyMat_testing_3isotopes.2024.01.10_D5.mat")
+load('Example_Dataset/Example_Output\C13\SkyMat_testing_3isotopes.2024.02.01_C13.mat')
+load('Example_Dataset/Example_Output\D5\SkyMat_testing_3isotopes.2024.02.01_D5.mat')
 
-outdir = "F:\Noah Germolus\Documents\MATLAB\SkyMat\Example_Dataset\Example_Output\CombineAndSort";
+outdir = "Example_Dataset/Example_Output\Combined";
+if ~exist("outdir", "dir")
+    mkdir(outdir)
+    disp("Output directory for combined files created:")
+    disp(outdir)
+end
 filename = "SkyMat_testing_3isotopes_OneMode.mat";
 
 %% Part 2: Curve Metrics.
@@ -322,7 +327,7 @@ var = var_OneMode;
 
 
 
-save([outdir + filesep + filename],"var", "mtabData", "tInfo", "sInfo","mtabNames", "LOQ", "LOD", "units" )
+save([outdir + filesep + filename],"var", "mtabData", "tInfo", "sInfo","mtabNames", "LOQ", "LOD", "conc_units" )
 
 clear
 

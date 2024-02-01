@@ -6,7 +6,7 @@
 % using a standard curve as a ratio (light/heavy).
 
 clear
-addpath('C:/Users/germo/Documents/MATLAB/SkyMat')
+addpath('.') % Assuming you start this script from the base code folder.
 
 %% Set filenames
 fileBase = 'SkyMat_testing_3isotopes'; % Set this, don't mess with the automatic date system.
@@ -14,22 +14,22 @@ today = datestr(datetime('now'),'.yyyy.mm.dd');
 NameOfFile = string([fileBase,today,'_D5.mat']);
 
 %% Set the sequence file here.
-wDir = 'K:\Yuting\SkyMat_testing';
+wDir = '../../Example_Input';
 fName = 'SkyMat_3isotopes_test_pos_and_neg.xlsx';
 sampleInfoFile = string([wDir filesep fName]);
 
 clear wDir
 
 %% Set the location and names of the quantification tables exported from Skyline
-sDir = 'K:\Yuting\SkyMat_testing';
+sDir = '../../Example_Input';
 dfile_pos = string([sDir filesep 'SkyMat_3isotopes_test_pos.csv']);
 dfile_neg = string([sDir filesep 'SkyMat_3isotopes_test_neg.csv']); 
 clear sDir
 
 %% Set directory for where SkyMat codes are - this will create an output folder for your results
-oDir = 'K:\Yuting\SkyMat_testing\NoahTest';
+oDir = 'Example_Dataset/Example_Output';
 addpath(string(oDir))
-oFolder = string([oDir filesep 'Output']);
+oFolder = string([oDir filesep 'D5']);
 mkdir(oFolder);
 
 cd(oFolder);
@@ -278,8 +278,8 @@ save(NameOfFile)
 %units - acceptable units are ng, pg, ng/mL, and pg/mL, note that the units are case sensitive
 %volume in mL - for example here '25' as a numeric input
 
-tDir = 'K:\_LabLogistics\Code_LumosBC_dataProcessing';
-tFile = string([tDir filesep 'Transitions_SkyLine_bothModes.2023.12.08.xlsx']);
+tDir = '../../Example_Input';
+tFile = string([tDir filesep 'TransitionList_SkyMat_Example.xlsx']);
 
 mtabData_D5_conc = convertMoles(tFile, mtabNames_D5, mtabData_D5, units, 25);
 mtabData_D5_conc_filtered = convertMoles(tFile, mtabNames_D5, mtabData_D5_filtered, units, 25);
@@ -317,3 +317,4 @@ writetable(conc_table_D5_filtered, strcat(fileBase,"_",conc_units,'_concTable_D5
 save(NameOfFile)
 
 clear fileBase 
+cd("../../../")
