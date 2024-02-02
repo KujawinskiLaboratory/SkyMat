@@ -3,7 +3,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,l
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,light,precursor,light,,molecules1,4-aminobenzoic acid,242.0812,242.0812,40,0,5324,0.01
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,light,precursor,light,,molecules1,4-aminobenzoic acid,242.0812,242.0812,41,0,2122,0
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,light,precursor,light,,molecules1,4-aminobenzoic acid,242.0812,242.0812,40,0,4282,0.01
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,light,precursor,light,0,molecules1,4-aminobenzoic acid,242.0812,242.0812,38,0,73983,0.06
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,light,precursor,light,0,molecules1,4-aminobenzoic acid,242.0812,242.0812,38,0,73983,0.06
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,light,precursor,light,0.001,molecules1,4-aminobenzoic acid,242.0812,242.0812,38,0,242823,0.05
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,light,precursor,light,0.01,molecules1,4-aminobenzoic acid,242.0812,242.0812,40,0,110938,0.03
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,light,precursor,light,0.05,molecules1,4-aminobenzoic acid,242.0812,242.0812,38,0,103049,0.02
@@ -26,7 +26,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,h
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,4-aminobenzoic acid,247.11263,247.11263,40,67495,3735,0.03
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,4-aminobenzoic acid,247.11263,247.11263,41,46183,13741,0.01
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,4-aminobenzoic acid,247.11263,247.11263,40,24952,35560,0.19
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,heavyD5,precursor,heavy,0,molecules1,4-aminobenzoic acid,247.11263,247.11263,38,15847,17163932,0.05
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,heavyD5,precursor,heavy,0,molecules1,4-aminobenzoic acid,247.11263,247.11263,38,15847,17163932,0.05
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,heavyD5,precursor,heavy,0.001,molecules1,4-aminobenzoic acid,247.11263,247.11263,38,126824,22013600,0.04
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,heavyD5,precursor,heavy,0.01,molecules1,4-aminobenzoic acid,247.11263,247.11263,40,63416,16922090,0.04
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,heavyD5,precursor,heavy,0.05,molecules1,4-aminobenzoic acid,247.11263,247.11263,38,87514,17932882,0.04
@@ -48,7 +48,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,h
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,4-aminobenzoic acid,248.10133,248.10133,40,119841,47850,0.18
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,4-aminobenzoic acid,248.10133,248.10133,41,141360,23644,0.01
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,4-aminobenzoic acid,248.10133,248.10133,40,120737,30434,0.04
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,heavyC13,precursor,heavy,0,molecules1,4-aminobenzoic acid,248.10133,248.10133,38,14695,674049,0.02
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,heavyC13,precursor,heavy,0,molecules1,4-aminobenzoic acid,248.10133,248.10133,38,14695,674049,0.02
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,heavyC13,precursor,heavy,0.001,molecules1,4-aminobenzoic acid,248.10133,248.10133,38,0,730267,0.04
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,heavyC13,precursor,heavy,0.01,molecules1,4-aminobenzoic acid,248.10133,248.10133,40,89956,499769,0.03
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,heavyC13,precursor,heavy,0.05,molecules1,4-aminobenzoic acid,248.10133,248.10133,38,133,574879,0.03
@@ -70,7 +70,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,l
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,light,precursor,light,,molecules1,alanine,194.0812,194.0812,75,717628,94615,0.3
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,light,precursor,light,,molecules1,alanine,194.0812,194.0812,77,550801,37911,0.01
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,light,precursor,light,,molecules1,alanine,194.0812,194.0812,77,440264,136768,0.08
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,light,precursor,light,0,molecules1,alanine,194.0812,194.0812,76,666964,320042,0.02
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,light,precursor,light,0,molecules1,alanine,194.0812,194.0812,76,666964,320042,0.02
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,light,precursor,light,0.001,molecules1,alanine,194.0812,194.0812,75,566896,168863,0.11
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,light,precursor,light,0.01,molecules1,alanine,194.0812,194.0812,76,475314,253656,0.05
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,light,precursor,light,0.05,molecules1,alanine,194.0812,194.0812,75,607206,336672,0.06
@@ -124,7 +124,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,h
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,alanine,199.11263,199.11263,75,0,15109,0.17
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,alanine,199.11263,199.11263,77,22165,24074,0.01
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,alanine,199.11263,199.11263,77,0,38016,0.22
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,heavyD5,precursor,heavy,0,molecules1,alanine,199.11263,199.11263,76,575951,37128136,0.08
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,heavyD5,precursor,heavy,0,molecules1,alanine,199.11263,199.11263,76,575951,37128136,0.08
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,heavyD5,precursor,heavy,0.001,molecules1,alanine,199.11263,199.11263,75,781879,55682456,0.08
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,heavyD5,precursor,heavy,0.01,molecules1,alanine,199.11263,199.11263,76,308168,46718988,0.08
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,heavyD5,precursor,heavy,0.05,molecules1,alanine,199.11263,199.11263,75,438468,49555776,0.08
@@ -146,7 +146,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,h
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,alanine,200.10133,200.10133,75,55551,62513,0.25
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,alanine,200.10133,200.10133,77,176817,47213,0.07
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,alanine,200.10133,200.10133,77,198847,33574,0.1
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,heavyC13,precursor,heavy,0,molecules1,alanine,200.10133,200.10133,76,270525,2026636,0.06
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,heavyC13,precursor,heavy,0,molecules1,alanine,200.10133,200.10133,76,270525,2026636,0.06
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,heavyC13,precursor,heavy,0.001,molecules1,alanine,200.10133,200.10133,75,73864,3289233,0.06
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,heavyC13,precursor,heavy,0.01,molecules1,alanine,200.10133,200.10133,76,150194,2741837,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,heavyC13,precursor,heavy,0.05,molecules1,alanine,200.10133,200.10133,75,59316,2593455,0.06
@@ -168,7 +168,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,l
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,light,precursor,light,,molecules1,glutamic acid,252.0866,252.0866,130,101389,178626,0.54
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,light,precursor,light,,molecules1,glutamic acid,252.0866,252.0866,133,0,35895,0.15
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,light,precursor,light,,molecules1,glutamic acid,252.0866,252.0866,132,0,73448,0.4
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,light,precursor,light,0,molecules1,glutamic acid,252.0866,252.0866,129,0,828643,0.05
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,light,precursor,light,0,molecules1,glutamic acid,252.0866,252.0866,129,0,828643,0.05
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,light,precursor,light,0.001,molecules1,glutamic acid,252.0866,252.0866,124,147088,2081939,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,light,precursor,light,0.01,molecules1,glutamic acid,252.0866,252.0866,126,255661,1426737,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,light,precursor,light,0.05,molecules1,glutamic acid,252.0866,252.0866,126,0,1429572,0.07
@@ -186,7 +186,7 @@ CMP009_022323_Lumos_BC_Syn_10_30_filtrate_B1,CMP009_022323_Lumos_BC_Syn_10_30_fi
 CMP010_022323_Lumos_BC_Croco_10_7_filtrate_B1,CMP010_022323_Lumos_BC_Croco_10_7_filtrate_B1.raw,Unknown,light,precursor,light,,molecules1,glutamic acid,252.0866,252.0866,122,176634,5551879,0.15
 CMP014_022323_Lumos_BC_Tpsu_9_24_filtrate_B1,CMP014_022323_Lumos_BC_Tpsu_9_24_filtrate_B1.raw,Unknown,light,precursor,light,,molecules1,glutamic acid,252.0866,252.0866,122,0,7225787,0.07
 CMP016_022323_Lumos_BC_Pro_11_18_filtrate_B1,CMP016_022323_Lumos_BC_Pro_11_18_filtrate_B1.raw,Unknown,light,precursor,light,,molecules1,glutamic acid,252.0866,252.0866,125,60440,1717690,0.07
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,light,custom,light,0,molecules1,glutamic acid,252.0866,105.0328,9,0,705592,0.64
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,light,custom,light,0,molecules1,glutamic acid,252.0866,105.0328,9,0,705592,0.64
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,light,custom,light,0.001,molecules1,glutamic acid,252.0866,105.0328,19,0,1071507,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,light,custom,light,0.01,molecules1,glutamic acid,252.0866,105.0328,17,0,967400,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,light,custom,light,0.05,molecules1,glutamic acid,252.0866,105.0328,16,0,928092,0.41
@@ -204,7 +204,7 @@ CMP009_022323_Lumos_BC_Syn_10_30_filtrate_B1,CMP009_022323_Lumos_BC_Syn_10_30_fi
 CMP010_022323_Lumos_BC_Croco_10_7_filtrate_B1,CMP010_022323_Lumos_BC_Croco_10_7_filtrate_B1.raw,Unknown,light,custom,light,,molecules1,glutamic acid,252.0866,105.0328,33,0,1749996,0.15
 CMP014_022323_Lumos_BC_Tpsu_9_24_filtrate_B1,CMP014_022323_Lumos_BC_Tpsu_9_24_filtrate_B1.raw,Unknown,light,custom,light,,molecules1,glutamic acid,252.0866,105.0328,24,0,2080103,0.07
 CMP016_022323_Lumos_BC_Pro_11_18_filtrate_B1,CMP016_022323_Lumos_BC_Pro_11_18_filtrate_B1.raw,Unknown,light,custom,light,,molecules1,glutamic acid,252.0866,105.0328,17,0,1017605,0.08
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,light,custom,light,0,molecules1,glutamic acid,252.0866,84.044,9,0,133549,0.64
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,light,custom,light,0,molecules1,glutamic acid,252.0866,84.044,9,0,133549,0.64
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,light,custom,light,0.001,molecules1,glutamic acid,252.0866,84.044,19,0,127737,0.06
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,light,custom,light,0.01,molecules1,glutamic acid,252.0866,84.044,17,0,140195,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,light,custom,light,0.05,molecules1,glutamic acid,252.0866,84.044,16,0,95594,0.07
@@ -226,7 +226,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,h
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,glutamic acid,257.11803,257.11803,130,0,109827,0.54
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,glutamic acid,257.11803,257.11803,133,0,35357,0.37
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,heavyD5,precursor,heavy,,molecules1,glutamic acid,257.11803,257.11803,132,0,34966,0.28
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,heavyD5,precursor,heavy,0,molecules1,glutamic acid,257.11803,257.11803,129,32734,19336628,0.07
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,heavyD5,precursor,heavy,0,molecules1,glutamic acid,257.11803,257.11803,129,32734,19336628,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,heavyD5,precursor,heavy,0.001,molecules1,glutamic acid,257.11803,257.11803,124,176777,37333448,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,heavyD5,precursor,heavy,0.01,molecules1,glutamic acid,257.11803,257.11803,126,264576,28707588,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,heavyD5,precursor,heavy,0.05,molecules1,glutamic acid,257.11803,257.11803,126,210458,31409378,0.07
@@ -248,7 +248,7 @@ CMP_022323_Lumos_BC_MQblank_01,CMP_022323_Lumos_BC_MQblank_01.raw,Double Blank,h
 CMP_022323_Lumos_BC_MQblank_02,CMP_022323_Lumos_BC_MQblank_02.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,glutamic acid,258.10673,258.10673,130,10362,69615,0.55
 CMP_022323_Lumos_BC_MQblank_03,CMP_022323_Lumos_BC_MQblank_03.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,glutamic acid,258.10673,258.10673,133,0,19408,0.17
 CMP_022323_Lumos_BC_MQblank_04,CMP_022323_Lumos_BC_MQblank_04.raw,Double Blank,heavyC13,precursor,heavy,,molecules1,glutamic acid,258.10673,258.10673,132,0,17159,0.17
-CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,standard,heavyC13,precursor,heavy,0,molecules1,glutamic acid,258.10673,258.10673,129,127590,907893,0.06
+CMP_exomtab_022323_Lumos_BC_SW_STD_0,CMP_exomtab_022323_Lumos_BC_SW_STD_0.raw,Standard,heavyC13,precursor,heavy,0,molecules1,glutamic acid,258.10673,258.10673,129,127590,907893,0.06
 CMP_exomtab_022323_Lumos_BC_SW_STD_1,CMP_exomtab_022323_Lumos_BC_SW_STD_1.raw,Standard,heavyC13,precursor,heavy,0.001,molecules1,glutamic acid,258.10673,258.10673,124,64998,1943331,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_2,CMP_exomtab_022323_Lumos_BC_SW_STD_2.raw,Standard,heavyC13,precursor,heavy,0.01,molecules1,glutamic acid,258.10673,258.10673,126,0,1566435,0.07
 CMP_exomtab_022323_Lumos_BC_SW_STD_3,CMP_exomtab_022323_Lumos_BC_SW_STD_3.raw,Standard,heavyC13,precursor,heavy,0.05,molecules1,glutamic acid,258.10673,258.10673,126,38338,1488131,0.07
