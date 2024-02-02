@@ -15,7 +15,7 @@ CMP_exomtab_022723_Lumos_BC_SW_STD_5,CMP_exomtab_022723_Lumos_BC_SW_STD_5.raw,St
 CMP_exomtab_022723_Lumos_BC_SW_STD_6,CMP_exomtab_022723_Lumos_BC_SW_STD_6.raw,Standard,light,precursor,light,1,molecules1,alanine,192.0666,192.0666,61,473358,6227602,0.04
 CMP_exomtab_022723_Lumos_BC_SW_STD_7,CMP_exomtab_022723_Lumos_BC_SW_STD_7.raw,Standard,light,precursor,light,5,molecules1,alanine,192.0666,192.0666,58,400266,21507906,0.04
 CMP_exomtab_022723_Lumos_BC_SW_STD_8,CMP_exomtab_022723_Lumos_BC_SW_STD_8.raw,Standard,light,precursor,light,10,molecules1,alanine,192.0666,192.0666,56,750178,41128284,0.05
-CMP_exomtab_022723_Lumos_BC_SW_STD_9,CMP_exomtab_022723_Lumos_BC_SW_STD_9.raw,Standard,light,precursor,light,50,molecules1,s,192.0666,192.0666,45,4999028,239542128,0.05
+CMP_exomtab_022723_Lumos_BC_SW_STD_9,CMP_exomtab_022723_Lumos_BC_SW_STD_9.raw,Standard,light,precursor,light,50,molecules1,alanine,192.0666,192.0666,45,4999028,239542128,0.05
 CMP_exomtab_022723_Lumos_BC_SW_STD_10,CMP_exomtab_022723_Lumos_BC_SW_STD_10.raw,Standard,light,precursor,light,100,molecules1,alanine,192.0666,192.0666,43,7038995,363515264,0.06
 CMP009_022723_Lumos_BC_Syn_10_30_filtrate_B1,CMP009_022723_Lumos_BC_Syn_10_30_filtrate_B1.raw,Unknown,light,precursor,light,,molecules1,alanine,192.0666,192.0666,61,357914,7457494,0.04
 CMP014_022723_Lumos_BC_Tpsu_9_24_filtrate_B1,CMP014_022723_Lumos_BC_Tpsu_9_24_filtrate_B1.raw,Unknown,light,precursor,light,,molecules1,alanine,192.0666,192.0666,61,364105,3463910,0.04
