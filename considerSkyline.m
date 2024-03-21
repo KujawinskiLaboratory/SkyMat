@@ -323,8 +323,15 @@ for a = 1:length(compoundList.names)
             if LOQs_possibilities(a,n) >= setStandardConcentrations(n+n_min-1)
                LODs_possibilities_filtered(a,n) = NaN;
             end
+
+            numberOfzeros = sum(ydata(2:n+n_min-1)==0);
+            if n+n_min-1-numberOfzeros<4
+                LODs_possibilities_filtered(a,n) = NaN;
+            end
         end    
         
+        clear numberOfzeros
+
         % the best LOD and LOQ are those calculated with the smallest curve
         % that brackets both LOD and LOQ
         if sum(~isnan(LODs_possibilities_filtered(a,:)))~=0 
