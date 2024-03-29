@@ -311,8 +311,7 @@ for a = 1:length(compoundList.names)
         for n = 1:(length(ydata)-n_min+1)
         % replace a LOD value with NaN, if the LOD is higher than the
         % highest point of the curve
-        % skipped the last LOD_possibility. In a rare case, all calculated
-        % LOQ were higher than the upper bound of the curve
+
             if LODs_possibilities(a,n) >= xdata(n+n_min-1)
                LODs_possibilities_filtered(a,n) = NaN;
             end
