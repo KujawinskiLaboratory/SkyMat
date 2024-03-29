@@ -306,31 +306,31 @@ for a = 1:length(compoundList.names)
         % Find the lowest number of STD point possible, with the selected
         % standard curve contain both LOD and LOQ
         
-        LODs_possibilities_filtered = LODs_possibilities;
+        LODs_possibilities_filtered(a,:) = LODs_possibilities(a,:);
 
-        for n = 1:width(LODs_possibilities)
+        for n = 1:(length(ydata)-n_min+1)
         % replace a LOD value with NaN, if the LOD is higher than the
         % highest point of the curve
         % skipped the last LOD_possibility. In a rare case, all calculated
         % LOQ were higher than the upper bound of the curve
-            if LODs_possibilities(a,n) >= setStandardConcentrations(n+n_min-1)
+            if LODs_possibilities(a,n) >= xdata(n+n_min-1)
                LODs_possibilities_filtered(a,n) = NaN;
             end
 
         % replace a LOQ value with NaN, if the LOD is higher than the
         % highest point of the curve
        
-            if LOQs_possibilities(a,n) >= setStandardConcentrations(n+n_min-1)
+            if LOQs_possibilities(a,n) >= xdata(n+n_min-1)
                LODs_possibilities_filtered(a,n) = NaN;
             end
 
-           % numberOfzeros = sum(ydata(2:n+n_min-1)==0);
-            %if n+n_min-1-numberOfzeros<4
-            %    LODs_possibilities_filtered(a,n) = NaN;
-            %end
+            numberOfzeros = sum(ydata(2:n+n_min-1)==0);
+            if n+n_min-1-numberOfzeros<4
+                LODs_possibilities_filtered(a,n) = NaN;
+            end
         end    
         
-        %clear numberOfzeros
+        clear numberOfzeros
 
         % the best LOD and LOQ are those calculated with the smallest curve
         % that brackets both LOD and LOQ
@@ -344,11 +344,7 @@ for a = 1:length(compoundList.names)
         % in the second column of LODs_best
 
             LODs_best(a,2) = location+n_min-1;
-        else 
-            LODs_best(a,1) = LODs_possibilities_filtered(a,end);
-            LOQs_best(a,1) = LOQs_possibilities(a,end);
-            LODs_best(a,2) = width(LODs_possibilities)+n_min-1;
-            
+        else             
             disp(['All calculated LOQs were above STD upper bound for '...
                 compoundList.names{a}])
         end
