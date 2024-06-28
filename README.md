@@ -20,10 +20,10 @@ We will use a number of columns that are exported from a Thermo sequence file `.
   * Note also that saving an `.xlsx` copy of your file means you can pare down the working file. Extraneous columns can be hidden or deleted if you like. 
 
 An example of the first couple lines of a formatted sequence file might look like this (*italics* are default columns in the sequence file):
-| *SampleType*   | *FileName*     | *SampleName*  | goodData | ionMode| sType | Nominal_Duration |
+| *SampleType*   | *FileName*     | *SampleName*  | goodData | ionMode| sType | runOrder |
 | :------------ |:--------------|:-------------|:---------|:-------|:------|:-----------------|
-| Unknown       | mtab_Zoop2_BC_lumos_071423_004 | Zoop2_1_Std0 condition neg | 0 | neg | rep | |
-| Std Bracket   | mtab_Zoop2_BC_lumos_071423_009 | Zoop2_1_std0 neg | 1 | neg | std| |
-| Unknown       | mtab_Zoop2_BC_lumos_071423_028 | Zoop2_37_t12_Cpy_9 neg | 1 | neg | rep | 12 |
+| Unknown       | mtab_Zoop2_BC_lumos_071423_004 | Zoop2_1_Std0 condition neg | 0 | neg | rep | 1 |
+| Std Bracket   | mtab_Zoop2_BC_lumos_071423_009 | Zoop2_1_std0 neg | 1 | neg | std| 2 |
+| Unknown       | mtab_Zoop2_BC_lumos_071423_028 | Zoop2_37_t12_Cpy_9 neg | 1 | neg | rep | 2 |
 
 Note that while the default column names might contain spaces (e.g., "Sample Type"), the SkyMat scripts strip this whitespace during processing.
