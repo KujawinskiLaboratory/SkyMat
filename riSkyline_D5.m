@@ -5,8 +5,14 @@
 % (peak areas from UPLC-Orbitrap data) and convert it to concentrations by
 % using a standard curve as a ratio (light/heavy).
 
+%%
 clear
-addpath('.') % Assuming you start this script from the base code folder.
+
+%%
+codeDir = 'C:\Users\brianna.garcia\Documents\GitHub\SkyMat'; % User must set code base directory
+
+cd(codeDir) %Change directory to work from base code directory
+addpath(genpath(codeDir)) %Add all folders and subfolders within the code diretory to your path
 
 %% Set filenames
 fileBase = 'SkyMat_testing_3isotopes'; % Set this, don't mess with the automatic date system.
@@ -14,28 +20,26 @@ today = datestr(datetime('now'),'.yyyy.mm.dd');
 NameOfFile = string([fileBase,today,'_D5.mat']);
 
 %% Set the sequence file here.
-wDir = '../../Example_Input';
-fName = 'SkyMat_3isotopes_test_pos_and_neg.xlsx';
+wDir = '\Example_Dataset\Example_Input'; %User must set directory where the  sequence file is location
+fName = 'SkyMat_3isotopes_test_pos_and_neg.xlsx'; %User must set the sequence file name here
 sampleInfoFile = string([wDir filesep fName]);
 
 clear wDir
-
 %% Set the location and names of the quantification tables exported from Skyline
-sDir = '../../Example_Input';
-dfile_pos = string([sDir filesep 'SkyMat_3isotopes_test_pos.csv']);
-dfile_neg = string([sDir filesep 'SkyMat_3isotopes_test_neg.csv']); 
+sDir = 'Example_Dataset\Example_Input'; %User must set directory where the quantification table file(s) are location
+dfile_pos = string([sDir filesep 'SkyMat_3isotopes_test_pos.csv']); %User must set the file name for the positive mode quantification table
+dfile_neg = string([sDir filesep 'SkyMat_3isotopes_test_neg.csv']); %User must set the file name for the negative mode quantification table
 clear sDir
 
 %% Set directory for where SkyMat codes are - this will create an output folder for your results
-oDir = 'Example_Dataset/Example_Output';
-addpath(string(oDir))
-oFolder = string([oDir filesep 'D5']);
-mkdir(oFolder);
+oDir = string([fileBase,today,'_Output']); %Creates an output folder based on your previously defined fileBase and todays date
+oFolder = strcat(oDir,filesep,'D5'); %Create a D5 output folder within the base output directory created above
+mkdir(oFolder); 
+addpath(genpath(oDir)) %Add this new output folder and all subfolders to the path
 
-cd(oFolder);
+cd(oFolder) %Change directory to your output folder so all downstream processing outputs collect in this folder
 
 clear oDir 
-
 %% ConsiderSkyline processing for positive mode.
 
 units = 'ng'; %set unit for standard curve 
@@ -278,7 +282,7 @@ save(NameOfFile)
 %units - acceptable units are ng, pg, ng/mL, and pg/mL, note that the units are case sensitive
 %volume in mL - for example here '25' as a numeric input
 
-tDir = '../../Example_Input';
+tDir = 'Example_Input'; %User must set in the directory location where the transition list is located
 tFile = string([tDir filesep 'TransitionList_SkyMat_Example.xlsx']);
 
 mtabData_D5_conc = convertMoles(tFile, mtabNames_D5, mtabData_D5, units, 25);
@@ -315,6 +319,3 @@ writetable(conc_table_D5_filtered, strcat(fileBase,"_",conc_units,'_concTable_D5
 
 %Save updated MATLAB file
 save(NameOfFile)
-
-clear fileBase 
-cd("../../../")
