@@ -24,6 +24,6 @@ An example of the first couple lines of a formatted sequence file might look lik
 | :------------ |:--------------|:-------------|:---------|:-------|:------|:-----------------|
 | Unknown       | mtab_Zoop2_BC_lumos_071423_004 | Zoop2_1_Std0 condition neg | 0 | neg | rep | 1 |
 | Std Bracket   | mtab_Zoop2_BC_lumos_071423_009 | Zoop2_1_std0 neg | 1 | neg | std| 2 |
-| Unknown       | mtab_Zoop2_BC_lumos_071423_028 | Zoop2_37_t12_Cpy_9 neg | 1 | neg | rep | 2 |
+| Unknown       | mtab_Zoop2_BC_lumos_071423_028 | Zoop2_37_t12_Cpy_9 neg | 1 | neg | rep | 3 |
 
 Note that while the default column names might contain spaces (e.g., "Sample Type"), the SkyMat scripts strip this whitespace during processing.
