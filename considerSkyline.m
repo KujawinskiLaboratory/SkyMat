@@ -418,8 +418,12 @@ for a = 1:length(compoundList.names)
                 
             end
         elseif isempty(kMax)
-            %all of the points in the standard curve are higher than what was
-            %measured in the samples
+            % Check if the length of ydata is less than nRequired
+            if length(ydata) < nRequired
+            end
+            % All of the points in the standard curve are higher than what was
+            % measured in the samples
+        else 
             ydata = ydata(1:nRequired);
             xdata = xdata(1:nRequired);
         end
