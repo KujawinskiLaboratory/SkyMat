@@ -9,6 +9,8 @@ Below, you will find a diagram of how to use these scripts in different applicat
 
 The main interface here will be `riSkyline.m`, and you should only use the version specific to the isotope label you're working with. If you have used both the 13C and the D5 internal standards, you'll use both versions here, which will generate two nearly-identical datasets. Ultimately, you will have _four_ standard curves this way (one per isotope and per ion mode), although only one ionization mode or isotope may be present for a given metabolite.
 
+'MATLAB' and the 'Statistics and Machine Learning Toolbox' are required for the code to function properly.
+
 ### Formatting the Sequence File
 We will use a number of columns that are exported from a Thermo sequence file `.csv`; however, you will need to add a few columns to this so that the scripts can pair positive and negative-mode data. Add these columns to the sequence file and save it as an `.xlsx` file extension. Later, if you run into problems and need to use Excel's sorting and formatting functionalities, this will be useful.
 * goodData: binary; SkyMat scripts will ignore sequence rows where goodData=0, such as column-conditioning injections
