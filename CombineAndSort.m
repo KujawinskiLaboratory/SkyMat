@@ -7,7 +7,19 @@
 % curves. 
 % 3. Convert numbers to molar basis. 
 
-%% Part 1: Loading files. 
+%% Clear former workspace before beginning
+
+clear
+clc
+
+%% Set code directory and path
+
+codeDir = 'C:\Users\brianna.garcia\Documents\GitHub\SkyMat'; % User must set code base directory
+
+cd(codeDir) %Change directory to work from base code directory
+addpath(genpath(codeDir)) %Add all folders and subfolders within the code diretory to your path
+
+%% %% Part 1: Loading files. 
 % Two files are available and their variables are the same except for an
 % appended set of characters, "_D5" or "_C13" depending on which isotope
 % was used in the calibration. 
@@ -16,20 +28,17 @@
 % your working data directory is. We want to actually remain there, but
 % may need to remind MATLAB where this script is without resetting your
 % working directory. 
-addpath('.')
 
-clear
-clc
-load('Example_Dataset/Example_Output\C13\SkyMat_testing_3isotopes.2024.02.01_C13.mat')
-load('Example_Dataset/Example_Output\D5\SkyMat_testing_3isotopes.2024.02.01_D5.mat')
+load('C:\Users\brianna.garcia\Documents\GitHub\SkyMat\SkyMat_testing_3isotopes.2024.07.01_Output\C13\SkyMat_testing_3isotopes.2024.07.01_C13.mat')
+load('C:\Users\brianna.garcia\Documents\GitHub\SkyMat\SkyMat_testing_3isotopes.2024.07.01_Output\D5\SkyMat_testing_3isotopes.2024.07.01_D5.mat')
 
-outdir = "Example_Dataset/Example_Output\Combined";
+outdir = "C:\Users\brianna.garcia\Documents\GitHub\SkyMat\SkyMat_testing_3isotopes.2024.07.01_Output\CombineAndSort";
 if ~exist("outdir", "dir")
     mkdir(outdir)
     disp("Output directory for combined files created:")
     disp(outdir)
 end
-filename = "SkyMat_testing_3isotopes_OneMode.mat";
+filename = "SkyMat_testing_3isotopes_OneMode";
 
 %% Part 2: Curve Metrics.
 % So, I was going to arbitrarily select a range where D5 calibrates high
@@ -341,8 +350,15 @@ var = var_OneMode;
 isotopeUsed = isotopeUsed_oneMode;
 
 
-save([outdir + filesep + filename],"var", "mtabData", "tInfo",...
+save(strcat(outdir,filesep,filename,'_',conc_units,'.mat'),"var", "mtabData", "tInfo",...
     "sInfo","mtabNames", "LOQ", "LOD", "conc_units", "modeUsed", "isotopeUsed")
 
-clear
+%% Create combined data table
+conc_table = splitvars(table(mtabNames,LOD,LOQ,mtabData));
+conc_table.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo.cName'] ;
 
+writetable(conc_table, strcat(outdir,filesep,filename,'_',conc_units,'.csv'));
+
+%%
+
+clear
