@@ -64,15 +64,25 @@ compoundList = table(unique(data.MoleculeName, 'stable'),'VariableNames', {'name
 
 % This section, rather than printing to the cmd window, will for each
 % compound write to the diary textfile if a compound is missing MS2 peaks. 
-diaryFilename = append(ionMode,"_",SILISType,"_considerSkyline_flags.txt");
-if exist(append(oFolder, filesep, diaryFilename), 'file') == 2
+diaryFilename = append(ionMode, "_", SILISType, "_considerSkyline_flags.txt");
+fullFilePath = append(oFolder, filesep, diaryFilename);
+
+if exist(fullFilePath, 'file') == 2
     fprintf('The file "%s" already exists in the working directory.\n', diaryFilename);
-    fprintf('Please delete the file before proceeding.\n');
-    error('Diary file already exists. Code execution halted.');
-else
-    % Create the diary file or perform other operations
-    diary(diaryFilename);
-    fprintf('Diary file "%s" created.\n', diaryFilename)
+    userResponse = input('Do you want to delete and overwrite this file? (y/n): ', 's');
+    
+    if lower(userResponse) == 'y'
+        fprintf('Deleting the existing file...\n');
+        delete(fullFilePath);  % Delete the existing file
+    else
+        fprintf('Operation cancelled. The existing file will not be overwritten.\n');
+        return;  % Exit the script or function
+    end
+end
+
+% Create the diary file or perform other operations
+diary(diaryFilename);
+fprintf('Diary file "%s" created.\n', diaryFilename);
 
     for a = 1:length(compoundList.names)
     quant = (strcmp(compoundList.names(a), data.MoleculeName) &...
@@ -89,9 +99,7 @@ else
     end
 
 diary off
-
-end 
-
+ 
 % Get rid of any files you don't want analyzed. We add a column in the
 % sequence file called "goodData" (boolean) and would typically only import
 % the "good" files into Skyline, but this is a place to make sure we only
@@ -159,14 +167,24 @@ LOQs_best = nan(length(compoundList.names),1);
 % prediction intervals. 
 % NPG 19 Sept 2023: Really should redo these sections so that it doesn't
 % stop the code completely if the file exists. 
-curveFilename = append(ionMode,"_",SILISType, "_mtabs_stdCurves.pdf");
-if exist(append(oFolder, filesep, curveFilename), 'file') == 2
+curveFilename = append(ionMode, "_", SILISType, "_mtabs_stdCurves.pdf");
+fullFilePath = append(oFolder, filesep, curveFilename);
+
+if exist(fullFilePath, 'file') == 2
     fprintf('The file "%s" already exists in the working directory.\n', curveFilename);
-    fprintf('Please delete the file before proceeding.\n');
-    error('PDF file already exists. Code execution halted.');
-else
-    % Create the diary file or perform other operations
-    fprintf('Calibration curve PDF file "%s" created.\n', curveFilename)
+    userResponse = input('Do you want to delete and overwrite this file? (y/n): ', 's');
+    
+    if lower(userResponse) == 'y'
+        fprintf('Deleting the existing file...\n');
+        delete(fullFilePath);  % Delete the existing file
+    else
+        fprintf('Operation cancelled. The existing file will not be overwritten.\n');
+        return;  % Exit the script or function
+    end
+end
+
+% Proceed to create the PDF file or perform other operations
+fprintf('Calibration curve PDF file "%s" created.\n', curveFilename);
 
 % Go through one compound at a time, (1) make the standard curve, (2) use that to
 % calculate the concentrations for each sample.
@@ -386,8 +404,10 @@ for a = 1:length(compoundList.names)
         clear tData_unknownsOnly
 
 
-        if ~isempty(kMax)
-            % Have at least one point on the curve.
+        if length(ydata) < nRequired
+            % If there are fewer data points than required, handle this case.
+            disp([compoundList.names{a} ' has fewer points than required.'])
+        elseif ~isempty(kMax)            % Have at least one point on the curve.
             if isequal(kMax(end),length(ydata))
                 % Already at the end of the standard curve...so use all the points
                 % do nothing...but send up a flag since the data are above
@@ -418,12 +438,6 @@ for a = 1:length(compoundList.names)
                 
             end
         elseif isempty(kMax)
-            % Check if the length of ydata is less than nRequired
-            if length(ydata) < nRequired
-            end
-            % All of the points in the standard curve are higher than what was
-            % measured in the samples
-        else 
             ydata = ydata(1:nRequired);
             xdata = xdata(1:nRequired);
         end
@@ -564,8 +578,6 @@ clear diaryFilename
         
     end 
     
-end
-
 end
 
 clear a compound xdata ydata smallDS
