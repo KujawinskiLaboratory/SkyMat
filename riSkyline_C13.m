@@ -186,9 +186,10 @@ all_LOD = [pos_C13.kgd.LOD;neg_C13.kgd.LOD];
 LOD_C13 = all_LOD(idx_Old);
 all_LOQ = [pos_C13.kgd.LOQ;neg_C13.kgd.LOQ]; 
 LOQ_C13 = all_LOQ(idx_Old);
+all_r2 = [pos_C13.kgd.r2_line;neg_C13.kgd.r2_line];
+r2_line_C13 = all_r2(idx_Old);
 
-
-clear c idx_New idx_Old all_LOD kgdNames all_LOQ
+clear c idx_New idx_Old all_LOD kgdNames all_LOQ all_r2
 
 [c idx_posNew idx_posOld] = intersect(mtabNames_C13,pos_C13.kgd.names + " pos");
 [c idx_negNew idx_negOld] = intersect(mtabNames_C13,neg_C13.kgd.names + " neg");
@@ -308,14 +309,14 @@ elseif strcmp(units,"pg") || strcmp(units,"pg_per_mL")
 end 
 
 % Save the unfiltered dataset converted to concentration
-conc_table_C13 = splitvars(table(mtabNames_C13,LOD_C13_conc,LOQ_C13_conc,mtabData_C13_conc));
-conc_table_C13.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_C13.cName'] ;
+conc_table_C13 = splitvars(table(mtabNames_C13,r2_line_C13,LOD_C13_conc,LOQ_C13_conc,mtabData_C13_conc));
+conc_table_C13.Properties.VariableNames = [{'Metabolite','r2_line','LOD','LOQ'},sInfo_C13.cName'] ;
 
 writetable(conc_table_C13, strcat(fileBase,"_",conc_units,'_concTable_C13.csv'));
 
 %Save the dataset with values < LOD filtered out and converted to concentration
-conc_table_C13_filtered = splitvars(table(mtabNames_C13,LOD_C13_conc,LOQ_C13_conc,mtabData_C13_conc_filtered));
-conc_table_C13_filtered.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_C13.cName'] ;
+conc_table_C13_filtered = splitvars(table(mtabNames_C13,r2_line_C13,LOD_C13_conc,LOQ_C13_conc,mtabData_C13_conc_filtered));
+conc_table_C13_filtered.Properties.VariableNames = [{'Metabolite','r2_line','LOD','LOQ'},sInfo_C13.cName'] ;
 
 writetable(conc_table_C13_filtered, strcat(fileBase,"_",conc_units,'_concTable_C13_filtered.csv'));
 
