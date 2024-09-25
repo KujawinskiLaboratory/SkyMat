@@ -184,6 +184,8 @@ all_LOD = [pos_D5.kgd.LOD;neg_D5.kgd.LOD];
 LOD_D5 = all_LOD(idx_Old);
 all_LOQ = [pos_D5.kgd.LOQ;neg_D5.kgd.LOQ]; 
 LOQ_D5 = all_LOQ(idx_Old);
+all_r2 = [pos_D5.kgd.r2_line;neg_D5.kgd.r2_line];
+r2_line_D5 = all_r2(idx_Old);
 
 
 clear c idx_New idx_Old all_LOD kgdNames all_LOQ
@@ -306,14 +308,14 @@ elseif strcmp(units,"pg") || strcmp(units,"pg_per_mL")
 end 
 
 % Save the unfiltered dataset converted to concentration
-conc_table_D5 = splitvars(table(mtabNames_D5,LOD_D5_conc,LOQ_D5_conc,mtabData_D5_conc));
-conc_table_D5.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_D5.cName'] ;
+conc_table_D5 = splitvars(table(mtabNames_D5,r2_line_D5,LOD_D5_conc,LOQ_D5_conc,mtabData_D5_conc));
+conc_table_D5.Properties.VariableNames = [{'Metabolite','r2_line','LOD','LOQ'},sInfo_D5.cName'] ;
 
 writetable(conc_table_D5, strcat(fileBase,"_",conc_units,'_concTable_D5.csv'));
 
 %Save the dataset with values < LOD filtered out and converted to concentration
-conc_table_D5_filtered = splitvars(table(mtabNames_D5,LOD_D5_conc,LOQ_D5_conc,mtabData_D5_conc_filtered));
-conc_table_D5_filtered.Properties.VariableNames = [{'Metabolite','LOD','LOQ'},sInfo_D5.cName'] ;
+conc_table_D5_filtered = splitvars(table(mtabNames_D5,r2_line_D5,LOD_D5_conc,LOQ_D5_conc,mtabData_D5_conc_filtered));
+conc_table_D5_filtered.Properties.VariableNames = [{'Metabolite','r2_line','LOD','LOQ'},sInfo_D5.cName'] ;
 
 writetable(conc_table_D5_filtered, strcat(fileBase,"_",conc_units,'_concTable_D5_filtered.csv'));
 
