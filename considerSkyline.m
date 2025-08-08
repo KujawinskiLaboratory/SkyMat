@@ -492,6 +492,7 @@ clear diaryFilename
                 compoundList.SDslope(a) = dataOut.SDslope;
                 compoundList.SDintercept(a) = dataOut.SDintercept;
                 compoundList.r2_line(a) = dataOut.r2;
+                compoundList.nPoints(a) = dataOut.nPoints;
                 compoundList.Sxx(a) = dataOut.Sxx;
                 compoundList.Syy(a) = dataOut.Syy;
                 compoundList.Sxy(a) = dataOut.Sxy;
@@ -512,20 +513,35 @@ clear diaryFilename
                     % completely using MATLAB's built in functions.
                     set(groot,'defaultFigureVisible','off')
                     figure
-                    plot(fitlm(xdata,ydata));
+                
+                    % Plot the fit and standards points
+                    h = plot(fitlm(xdata, ydata)); % h(1) = data points, h(2) = fit line
                     hold on
-                    plot(calcConc,tData,'ok','DisplayName','Samples')
+                    h(1).DisplayName = 'Standards'; % Rename "Data" to "Standards"
+                
+                    % Plot samples
+                    plot(calcConc, tData, 'ok', 'DisplayName', 'Samples')
+                
+                    % Titles and labels
                     title(string(compoundList.names{a}) + " " + string(ionMode) + " " + string(SILISType))
                     xlabel(append('Standard Concentration Added (', units, ")"))
                     ylabel('Peak Ratio (light/heavy)')
-                    text(.95,.97, "R^2 =" + string(dataOut.r2),'Units','normalized')
-                    xline(compoundList.LOD(a),'--g','LOD','DisplayName','LOD')
-                    xline(compoundList.LOQ(a),'--b','LOQ','DisplayName','LOQ')
-                    exportgraphics(gca, curveFilename, 'Append',  true)
+                
+                    % R^2 text
+                    text(.95, .97, "R^2 =" + string(dataOut.r2), 'Units', 'normalized')
+                
+                    % LOD and LOQ lines
+                    xline(compoundList.LOD(a), '--g', 'LOD', 'DisplayName', 'LOD')
+                    xline(compoundList.LOQ(a), '--b', 'LOQ', 'DisplayName', 'LOQ')
+                
+                    % Legend
+                    legend('Location', 'best')
+                
+                    % Export
+                    exportgraphics(gca, curveFilename, 'Append', true)
                     hold off
                     close(gcf)
                     set(groot,'defaultFigureVisible','on')
-
                 end
 
             else
@@ -537,6 +553,7 @@ clear diaryFilename
                 compoundList.SDslope(a) = NaN;
                 compoundList.SDintercept(a) = NaN;
                 compoundList.r2_line(a) = NaN;
+                compoundList.nPoints(a) = NaN;
                 compoundList.Sxx(a) = NaN;
                 compoundList.Syy(a) = NaN;
                 compoundList.Sxy(a) = NaN;
@@ -560,6 +577,7 @@ clear diaryFilename
             compoundList.SDslope(a) = NaN;
             compoundList.SDintercept(a) = NaN;
             compoundList.r2_line(a) = NaN;
+            compoundList.nPoints(a) = NaN;
             compoundList.Sxx(a) = NaN;
             compoundList.Syy(a) = NaN;
             compoundList.Sxy(a) = NaN;
@@ -726,6 +744,7 @@ end
         dataOut.Syy = Syy;
         dataOut.Sxy = Sxy;
         dataOut.Sy = Sy;
+        dataOut.nPoints = NumPoints;
         
         % Now to calculate prediction intervals at 95% confidence.
         A = (1-r2)*((NumPoints-1)/(NumPoints-2))*(1/Sxx);
