@@ -128,7 +128,7 @@ end
 % Set up indices and names to point to the standards and samples.
 standardNames = info.FileName(kStandard);
 nStandards = sum(kStandard);
-kSample = strcmp('Unknown',info.SampleType);
+kSample = strcmp('Unknown',info.SampleType) | strcmp('QC',info.SampleType); %updated to extract pools as well
 sampleNames = info.FileName(kSample);
 nSamples =sum(kSample);
 clear kStandard kSample
@@ -375,7 +375,7 @@ for a = 1:length(compoundList.names)
         tData(ib) = smallDS.LHR(ia);
         clear c ia ib
         
-        su = strcmp(info.sType,'rep');
+        su = strcmp(info.sType, 'rep') | strcmp(info.sType, 'pool'); %adjusted to extract pools as well
         ksu = find(su==1);
         [c, ~, ib] = intersect([info.FileName(ksu)+".raw"],smallDS.FileName);
         % This is probably redundant but checks to see if the export was 
