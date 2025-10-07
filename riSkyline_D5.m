@@ -8,6 +8,16 @@
 %%
 clear
 
+%% Check required toolboxes are installed 
+
+requiredToolbox = 'Image Processing Toolbox'; 
+toolboxes = ver;
+installedToolboxes = {toolboxes.Name};
+
+if ~any(strcmp(requiredToolbox, installedToolboxes))
+error('The required toolbox "%s" is not installed. Please install it before running this script.', requiredToolbox);
+end
+
 %%
 codeDir = 'C:\Users\brianna.garcia\Documents\GitHub\SkyMat'; % User must set code base directory
 
