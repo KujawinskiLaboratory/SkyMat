@@ -14,10 +14,18 @@ The main interface here will be `riSkyline.m`, and you should only use the versi
 'MATLAB' and the 'Statistics and Machine Learning Toolbox' are required for the code to function properly.
 
 ### Formatting the Sequence File
-We will use a number of columns that are exported from a Thermo sequence file `.csv`; however, you will need to add a few columns to this so that the scripts can pair positive and negative-mode data. Add these columns to the sequence file and save it as an `.xlsx` file extension. Later, if you run into problems and need to use Excel's sorting and formatting functionalities, this will be useful.
+We will use a number of columns that are exported from a Thermo sequence file `.csv`; however, you will need to add a few columns to this so that the scripts can pair positive and negative-mode data. 
+
+Specific requirements for the sequence sheet are listed below: 
+* to pair the positive and negative samples together, the SampleName column must have the same sample name for both mode distinguished by a " pos" or " neg". (e.g., "Zoop2_37_t12_Cpy_9 neg" and "Zoop2_37_t12_Cpy_9 pos")
+* For pairing of pooled samples the code looked for the string "pool" within the SampleName column and then renames them to append an iterative number (e.g., pool01, pool02)
+
+Future updates of this script will adresss the potential to run this for only a single ion mode (e.g., positive or negative) and improve the need for set naming conventions. 
+
+Add these columns to the sequence file and save it as an `.xlsx` file extension. Later, if you run into problems and need to use Excel's sorting and formatting functionalities, this will be useful.
 * goodData: binary; SkyMat scripts will ignore sequence rows where goodData=0, such as column-conditioning injections
 * ionMode: "pos" or "neg"
-* sType: "blank", "rep" (samples), "std" (standard curve), "pool" (pooled QC samples)
+* sType: "blank", "rep" (samples), "std" (standard curve), "pool" (pooled QC samples) ; note: blank samples are currently not exported from the code
 * runOrder: numerical input showcasing the order your sequence was executed in
 * _Optional_ sample data: could be species, or incubation time, or depth in the water column, or some experimental identifier.
   * Since this sequence file can be reloaded downstream, it can be used as a sort of master table for sample information that you draw from later. 
