@@ -2,6 +2,8 @@
 The Kujawinski Lab uses a unique method for processing samples prepared by the [Widner et al. (2021)](https://doi-org.libproxy.mit.edu/10.1021/acs.analchem.0c03769) method. 
 The method has gone through some upgrades (for example, double stable isotope labels) in the intervening years, but for anyone using the chemical method and peak-picking in Skyline, this is meant to be a set of codes that will get you from peak areas to concentrations, provided a standard curve. 
 
+Our current method uses to heavy isotope labels for quantification, 13C and D5. Two scripts are provided, one for each of those heavy labels to provided concentrations quantified using the light-to-heavy ratio calculated using that specific heavy labeled internal standard. Both scripts then call upon considerSkyline and convertMoles. The current script assumes data has been run in both positive and negative mode and combines those into a single output. 
+
 ## How to use this repository.
 Below, you will find a diagram of how to use these scripts in different applications of the method.
 
